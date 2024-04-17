@@ -1,44 +1,55 @@
 <template>
-    <v-sheet class="mx-auto" width="300">        
-      <v-form  ref="form">
-        <v-text-field
-          v-model="name"
-          :counter="10"
-          
-          label="Ім'я"
-          required
-        ></v-text-field>
-        <v-text-field
+    <v-card
+      class="wrapper mx-auto pa-12 pb-8" 
+      elevation="8"
+      max-width="448"
+      rounded="lg"
+    >      
+    <v-text-field
           v-model="email"
-          :counter="10"
-          
+          :counter="30"
+          prepend-inner-icon="mdi-email-outline"
           label="Email"
+          variant="outlined"
           required
         ></v-text-field>
         <v-text-field
           v-model="password"
-          type="password"
-          :counter="10"
+          :counter="50"
+          :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="visible ? 'text' : 'password'"
+          prepend-inner-icon="mdi-lock-outline"
+          variant="outlined"
+          @click:append-inner="visible = !visible"
         
           label="Пароль"
           required
         ></v-text-field>
         <v-text-field
           v-model="password_confirmation"
-          type="password"
-          :counter="10"
+          :counter="50"
+          :append-inner-icon="visible_conf ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="visible_conf ? 'text' : 'password'"
+          prepend-inner-icon="mdi-lock-outline"
+          variant="outlined"
+          @click:append-inner="visible_conf = !visible_conf"
         
-          label="Пароль"
+          label="Підтвердіть пароль"
           required
         ></v-text-field>
   
-        <div class="d-flex flex-column">
-          <v-btn class="mt-4" color="success" type="submit"  value="register" block @click="register">
+        <v-btn class="mb-8" color="blue" size="large" variant="tonal" block @click="register">
             Зареєструватися
           </v-btn>
-        </div>
-      </v-form>
-    </v-sheet>
+          <v-card-text class="text-center">
+              <router-link to="/login"
+                class="text-blue text-decoration-none"
+                rel="noopener noreferrer"
+              >
+                Вже є акаунт? Увійти <v-icon icon="mdi-chevron-right"></v-icon>
+              </router-link>
+           </v-card-text>
+    </v-card>
   </template>
   
   <script>
@@ -51,6 +62,8 @@ import axios from 'axios';
         email: '',
         password: '',
         password_confirmation: '',
+        visible: false,
+        visible_conf: false
       //   emailRules: [
       //   v => !!v || 'Email is required',
       //   v => (v && v.length <= 10) || 'Email must be less than 10 characters',
@@ -79,4 +92,11 @@ import axios from 'axios';
       }
     }
   </script>
+
+<style scoped>
+.wrapper {
+  top: 50%;
+  transform: translateY(-50%);
+}
+</style>
   

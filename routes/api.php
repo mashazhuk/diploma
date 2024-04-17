@@ -4,11 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\UserController;
 
 //Open routes
 Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
 Route::get("sorted-lessons", [LessonController::class, 'getSortedLessons']);
+Route::get("get-role", [UserController::class, 'getRole']);
 
 
 //Protected routes 

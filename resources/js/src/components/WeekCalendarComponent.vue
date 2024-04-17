@@ -24,6 +24,7 @@
 </template>
 
 <script>
+
 import WeekLesson from './WeekLesson.vue';
 
 export default {
@@ -43,6 +44,7 @@ export default {
         mounted() {
             this.updateCalendar();
             this.getLessonsByDate();
+            this.getRole();
             
         },
         methods: {
@@ -78,6 +80,13 @@ export default {
                 this.updateCalendar();
             },
 
+            getRole() {
+                axios.get('/api/get-role')
+                    .then(res => {
+                        console.log(res.data);
+                    })
+            },
+
            
             getLessonsByDate() {
                 axios.get('/api/sorted-lessons')
@@ -89,7 +98,7 @@ export default {
                         console.error(error);
                     });
                     
-            }
+            },
         }
     }
 </script>

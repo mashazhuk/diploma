@@ -4,12 +4,13 @@
 import Login from "../pages/Login.vue";
 import Register from "../pages/Register.vue";
 import WeekCalendar from "../components/WeekCalendarComponent.vue";
+import Example from "../components/ExampleComponent.vue";
 
 const routes = [
-    // {
-    //     path: '/',
-    //     component: Home
-    // },
+    {
+        path: '/',
+        component: Example
+    },
     
     // {
     //     path: '/week-sch-student',

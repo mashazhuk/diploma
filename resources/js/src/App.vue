@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <!-- <div>
         <router-link to="/login">Login</router-link>
         <router-link to="/register">Register</router-link>
         <router-link to="/week-sch-student">Розклад студента</router-link>
         <a @click.prevent="logout" href="#">Вийти</a>
         <router-view></router-view>
-    </div>
-    <!-- <v-card>
+    </div> -->
+    <v-card>
     <v-layout>
       <v-navigation-drawer
         permanent
@@ -25,18 +25,27 @@
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-          <router-link class="nav-link" to="/"><v-list-item prepend-icon="mdi-folder" title="Головна" value="myfiles"></v-list-item></router-link>
+        
+        <router-link class="nav-link" to="/"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
           <router-link class="nav-link" to="/week-sch-student"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
           <router-link class="nav-link" to="/login"><v-list-item prepend-icon="mdi-account-multiple" title="Login" value="login"></v-list-item></router-link>
+          <router-link class="nav-link" to="/register"><v-list-item prepend-icon="mdi-account-multiple" title="Register" value="register"></v-list-item></router-link>
           <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
         </v-list>
+        <template v-slot:append>
+          <div class="pa-2">
+                <v-list density="compact" nav>
+                    <v-list-item prepend-icon="mdi-logout"><v-btn @click.prevent="logout" >Logout</v-btn></v-list-item>
+                </v-list>
+          </div>
+        </template>
       </v-navigation-drawer>
 
       <v-main class="main">
         <router-view />
       </v-main>
     </v-layout>
-  </v-card> -->
+  </v-card>
 </template>
 
 
@@ -46,6 +55,7 @@
 }
 .main {
   margin-left: 20px;
+  height: 100vh;
 }
 </style>
 
