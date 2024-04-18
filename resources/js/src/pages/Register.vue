@@ -84,6 +84,7 @@ import axios from 'axios';
               .then(resp => { 
                 console.log(resp),
                 localStorage.setItem('x_xsrf_token', resp.config.headers['X-XSRF-TOKEN']);
+                localStorage.setItem('token', resp.data.token);
             }) 
               .catch(error => { console.log(error); }); 
             }) 

@@ -10,8 +10,9 @@ class UserController extends Controller
 {
     public function getRole()
     {
-        $user = Auth::user();
-        // $role = $user->role;
-        return $user;
+        $id = Auth::user()->id;
+        $currentuser = User::find($id);
+        $role = $currentuser->role;
+        return response()->json(['role' => $role]);
     }
 }

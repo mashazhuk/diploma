@@ -13,6 +13,7 @@
       theme="dark"
 
     >
+    
       <v-card-item>
         <v-card-title class="text-body-2 d-flex align-center">
           <v-icon
@@ -68,7 +69,7 @@ export default {
     },
     data() {
       return {
-        showDialog: this.dialog
+        showDialog: this.dialog,
       };
     },
     watch: {
@@ -76,7 +77,7 @@ export default {
         this.showDialog = newVal;
       }
     },
-
+    
     methods: {
       transformTime(dateTime) {
         let date = new Date(dateTime);

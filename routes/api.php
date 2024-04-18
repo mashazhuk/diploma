@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
 Route::get("sorted-lessons", [LessonController::class, 'getSortedLessons']);
-Route::get("get-role", [UserController::class, 'getRole']);
+// Route::get("get-role", [UserController::class, 'getRole']);
 
 
 //Protected routes 
@@ -19,6 +19,7 @@ Route::group([
 ], function() {
     Route::get('profile', [ApiController::class, "profile"]);
     Route::get('logout', [ApiController::class, "logout"]);
+    Route::get("get-role", [UserController::class, 'getRole']);
     
 });
 

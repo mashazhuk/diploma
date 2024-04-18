@@ -64,11 +64,12 @@ import axios from 'axios';
               .then(resp => { 
                 console.log(resp),
                 localStorage.setItem('x_xsrf_token', resp.config.headers['X-XSRF-TOKEN']);
+                localStorage.setItem('token', resp.data.token);
                 this.$router.push('/week-sch-student');
               }) 
               .catch(error => { console.log(error); }); 
             }) 
-            .catch(error => { console.log(error); });
+            .catch(err => { console.log(err); });
         },
       }
     }

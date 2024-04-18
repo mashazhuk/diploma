@@ -37,7 +37,8 @@ export default {
                 week: [],
                 month: '',
                 current: new Date(),
-                lessonsByDate: []
+                lessonsByDate: [],
+                role: ''
             }
         },
 
@@ -81,9 +82,15 @@ export default {
             },
 
             getRole() {
-                axios.get('/api/get-role')
+                const token = localStorage.getItem('token');
+                axios.get('/api/get-role', {
+                    headers: {
+                     'Authorization': `Bearer ${token}`
+                    }
+                })
                     .then(res => {
-                        console.log(res.data);
+                        this.role = res.data.role;
+                        localStorage.setItem('role', res.data.role);
                     })
             },
 
