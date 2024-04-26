@@ -8,10 +8,14 @@ import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { VTimePicker } from 'vuetify/labs/VTimePicker'
 
 
 const vuetify = createVuetify({
-  components,
+    components: {
+        VTimePicker,
+        ...components
+      },
   directives,
   icons: {
     defaultSet: 'mdi',
@@ -20,7 +24,6 @@ const vuetify = createVuetify({
 
 createApp(App)
     .use(router)
-    // .use(Store)
     .use(vuetify)
     .mount('#app');
 

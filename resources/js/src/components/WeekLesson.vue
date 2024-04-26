@@ -1,28 +1,33 @@
 <template>
     <div v-for="(lesson, idx) in lessons" :key="idx">
-        <v-btn @click="openModal(lesson)" class="btn-lesson">
-            <v-icon class="btn-icon">mdi-pencil</v-icon>
-            <span class="lesson-name">{{ lesson.lesson_name }}</span>
-            <div class="time flex-column">
-                <span>{{ transformTime(lesson.start_time) }}</span>
-                <span>{{ transformTime(lesson.end_time) }}</span>
-            </div>
-        </v-btn>
+            <v-btn @click="openModal(lesson)" class="btn-lesson">
+                <span class="lesson-name">{{ lesson.lesson_name }}</span>
+                <div class="time flex-column">
+                    <span>{{ transformTime(lesson.start_time) }}</span>
+                    <span>{{ transformTime(lesson.end_time) }}</span>
+                </div>
+                <v-icon class="icon" icon="mdi-pencil" end @click.stop="openEditModal(lesson)"></v-icon>
+            </v-btn>
     </div>
     <eventModal @close="dialog = false" :dialog="dialog" :lesson="selectedLesson"></eventModal>
+    <event-edit-modal @close="edit_dialog = false" :dialog="edit_dialog" :lesson="selectedLesson" />
+
 </template>
     
 <script>
 import eventModal from './EventModal.vue';
+import EventEditModal from './EventEditModal.vue';
 export default {
     components: {
-        eventModal
+        eventModal,
+        EventEditModal
     },
     name: 'WeekLesson',
     data() {
         return {
             selectedLesson: {},
             dialog: false,
+            edit_dialog: false,
             role: ''
         }
     },
@@ -40,6 +45,12 @@ export default {
             this.dialog = true;
             console.log(this.selectedLesson)
         },
+
+        openEditModal(lesson) {
+            this.selectedLesson = lesson;
+            this.edit_dialog = true;
+        },
+
         transformTime(dateTime) {
             let date = new Date(dateTime);
             let hours = date.getHours();
@@ -53,7 +64,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 .btn-lesson {
     margin-top: 10px;
@@ -64,22 +75,14 @@ export default {
     justify-content: space-between;
 }
 
-.btn-icon {
-    display: none;
-}
+.btn-lesson:hover {
+    .time {
+        opacity: 0;
+    }
 
-.btn-lesson:hover .btn-icon {
-    display: contents;
-}
-
-.btn-icon::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    box-shadow: 0 0 10px #ef0101;
+    .icon {
+        opacity: 1;
+    }
 }
 
 .lesson-name {
@@ -96,7 +99,8 @@ export default {
     position: absolute;
     right: 0;
     display: flex;
-    align-items: flex-end;    
+    align-items: flex-end;  
+    transition: opacity 0.2s ease-in-out;  
 }
 
 .time span {
@@ -104,24 +108,15 @@ export default {
     color: #454444
 }
 
-/* .d-flex {
-    
+.icon {
+    opacity: 0;
+    position: absolute;
+    right: 10px;
+    transition: opacity 0.2s ease-in-out;
+    color: dimgrey;
+
+    &:hover {
+        color: black;
+    }
 }
-.justify-space-between {
-    
-}
-.align-center {
-    
-}
-.align-end {
-    align-items: flex-end;
-}
-.text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.flex-grow-1 {
-    flex-grow: 1;
-} */
 </style>

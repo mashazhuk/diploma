@@ -2,6 +2,7 @@
   <v-dialog
       v-model="showDialog"
       width="auto"
+      @click="closeWithEvent('close', $event)"
     >
     <v-card
       class="ma-4"
@@ -9,9 +10,9 @@
       rounded="lg"
       variant="flat"
       max-width="650"
+      min-height="300"
       width="400"
       theme="dark"
-
     >
     
       <v-card-item>
@@ -40,21 +41,6 @@
 
         </div>
       </v-card-item>
-
-      <!-- <v-divider></v-divider>
-
-        <v-spacer></v-spacer>
-      <div class="pa-4 d-flex align-center">
-        <v-btn
-          class="text-none"
-          prepend-icon="mdi-check"
-          variant="text"
-          border
-          @click="$emit('close')"
-        >
-          Готово
-        </v-btn>
-      </div> -->
     </v-card>
   </v-dialog>
 </template>
@@ -70,23 +56,49 @@ export default {
     data() {
       return {
         showDialog: this.dialog,
+        role: '',
       };
     },
+    mounted() {
+      this.getRole();
+      document.addEventListener('keydown', this.onEscKeyPressed);
+    },
+
+    beforeDestroy() {
+      document.removeEventListener('keydown', this.onEscKeyPressed);
+    },
+
     watch: {
       dialog(newVal) {
         this.showDialog = newVal;
+        
       }
     },
-    
+
     methods: {
       transformTime(dateTime) {
         let date = new Date(dateTime);
         let hours = date.getHours();
         let minutes = date.getMinutes();
-        console.log(this.dialog);
         return hours + ":" + minutes;
         
+      },
+
+      getRole() {
+            this.role = localStorage.getItem('role');
+      },
+      closeWithEvent(eventValue, event) {
+      // Проверяем, был ли клик вне модального окна
+      if (!this.$el.contains(event.target)) {
+        this.$emit('close', eventValue);
       }
+    },
+    // Обработчик события для закрытия модального окна при нажатии на клавишу "Escape"
+    onEscKeyPressed(event) {
+      if (event.key === 'Escape') {
+        this.$emit('close', 'close');
+      }
+    }
     }
 }
 

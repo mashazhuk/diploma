@@ -6,5 +6,15 @@ const router = createRouter({
     linkActiveClass: 'active',
     routes
 });
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    if (to.name !== 'Login' && !token) {
+      // Если пользователь не аутентифицирован и не находится на странице входа,
+      // перенаправляем его на страницу входа
+      next({ name: 'Login' });
+    } else {
+      next(); // Продолжаем навигацию
+    }
+  });
 
 export default router;

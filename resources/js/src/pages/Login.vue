@@ -5,11 +5,16 @@
       max-width="448"
       rounded="lg"
     >      
+      <v-form 
+        v-model="form"
+        @submit.prevent="login"
+        >
         <v-text-field
           v-model="email"
           :counter="30"
           prepend-inner-icon="mdi-email-outline"
           label="Email"
+          type="email"
           variant="outlined"
           required
         ></v-text-field>
@@ -26,9 +31,19 @@
           required
         ></v-text-field>
 
-          <v-btn class="mb-8" color="blue" size="large" variant="tonal" block @click="login">
+          <v-btn 
+            :disabled="!form"
+            :loading="loading"
+            class="mb-8" 
+            color="blue" 
+            size="large" 
+            variant="tonal" 
+            block 
+            type="submit"
+            >
             Увійти
           </v-btn>
+      </v-form>
           <v-card-text class="text-center">
               <router-link to="/register"
                 class="text-blue text-decoration-none"
@@ -49,6 +64,9 @@ import axios from 'axios';
         email: '',
         password: '',
         visible: false,
+        form: false,
+        loading: false,
+        
       //   emailRules: [
       //   v => !!v || 'Email is required',
       //   v => (v && v.length <= 10) || 'Email must be less than 10 characters',
@@ -59,6 +77,8 @@ import axios from 'axios';
             const { valid } = await this.$refs.form.validate()
         },
         login() {
+          this.loading = true;
+
           axios.get('/sanctum/csrf-cookie') .then(response => { 
             axios.post('/api/login', { email: this.email, password: this.password }) 
               .then(resp => { 

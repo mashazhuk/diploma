@@ -46,6 +46,7 @@ export default {
             this.updateCalendar();
             this.getLessonsByDate();
             this.getRole();
+            // this.fetchProfile();
             
         },
         methods: {
@@ -106,6 +107,28 @@ export default {
                     });
                     
             },
+
+        //     fetchProfile() {
+        //     const token = localStorage.getItem('token');
+        //     axios.get('/api/profile', {
+        //         headers: {
+        //              'Authorization': `Bearer ${token}`
+        //             }
+        //     })
+        //         .then(response => {
+        //             // Успешный ответ от сервера
+        //            console.log(response.data.data);
+        //         })
+        //         .catch(error => {
+        //             if (error.response && error.response.status === 401) {
+        //     // Токен недействителен, перенаправляем на страницу входа
+        //                 this.$router.push('/login');
+        //             } else {
+        //     // Другая ошибка, можно обработать по-другому, например, показать сообщение об ошибке
+        //             console.error('Ошибка при запросе профиля:', error);
+        //             }
+        //         });
+        // }
         }
     }
 </script>
