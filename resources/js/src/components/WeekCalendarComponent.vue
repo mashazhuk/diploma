@@ -26,7 +26,7 @@
                 <p class="weekday">{{ day.toLocaleString('uk-UA', {weekday: 'short'})}}</p>
                 <h3 class="day">{{ day.getDate() }}</h3>
             </div>
-            <WeekLesson :lessons="lessonsByDate[day.toISOString().substring(0, 10)] || []"/>
+            <WeekLesson :lessons="lessonsByDate[day.toLocaleDateString('en-CA')] || []"/>
     </v-col>
     </v-row>
   </v-container>
@@ -65,14 +65,16 @@ export default {
             },
 
             getWeek() {
-                let week = [];
-                let first = this.current.getDate() - this.current.getDay() + (this.current.getDay() === 0 ? -6 : 1);
-                for (let i = 0; i < 6; i++) {
-                    let day = new Date(this.current.setDate(first + i));
-                    week.push(day);
-                }
-                return week;
-            },
+    let week = [];
+    let first = this.current.getDate() - this.current.getDay() + (this.current.getDay() === 0 ? -6 : 1);
+    for (let i = 0; i < 6; i++) {
+        let day = new Date(this.current.getFullYear(), this.current.getMonth(), first + i);
+        week.push(day);
+    }
+    return week;
+
+},
+
 
             getMonthName() {
                 let date = new Date();

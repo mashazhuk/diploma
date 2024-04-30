@@ -14,6 +14,7 @@
       >
       <v-form
         @submit.prevent="submitForm"
+
         >
         <v-card-item>
           <v-card-title class="text-body-2 d-flex align-center">
@@ -26,6 +27,8 @@
             density="compact"
             variant="underlined"
             :rules="timeRules"
+            @click.stop
+
             @input="autoInsertColonStart"
           >
         </v-text-field>
@@ -40,6 +43,7 @@
           density="compact"
           :rules="timeRules"
           @input="autoInsertColonEnd"
+          @click.stop
         >
         </v-text-field>
   
@@ -48,12 +52,14 @@
           </v-card-title>
 
           <v-text-field
-          v-model="formattedDate"
+          v-model="formattedDateForm"
           :active="menu2"
           :focus="menu2"
           label="Picker in menu"
           prepend-icon="mdi-clock-time-four-outline"
           readonly
+          @click.stop
+
         >
         <v-menu
             v-model="menu2"
@@ -79,6 +85,7 @@
               single-line
               variant="underlined"
               density="compact"
+              @click.stop
             ></v-text-field>
 
             <label>ID конференції</label>
@@ -88,6 +95,7 @@
               single-line
               variant="underlined"
               density="compact"
+              @click.stop
             ></v-text-field>
 
             <label>Пароль конференції</label>
@@ -97,6 +105,7 @@
               single-line
               variant="underlined"
               density="compact"
+              @click.stop
             ></v-text-field>
   
           </div>
@@ -154,8 +163,12 @@
       },
 
       computed: {
-        formattedDate() {
-          return this.date ? new Date(this.date).toLocaleDateString('fr-CA') : null;
+        formattedDateForm() {
+          return this.date ? new Date(this.date).toLocaleDateString('uk-UA') : null;
+        },
+
+        formattedDateDB() {
+          return this.date ? new Date(this.date).toLocaleDateString('en-CA') : null;
         }
       },
   
@@ -168,19 +181,24 @@
       methods: {
 
         submitForm() {
-          const formData = {
-            // start_time: this.startTime,
-            // end_time: this.endTime,
-            lesson_date: this.formattedDate,
-            // lesson_name: this.lessonName,
-            // conference_id: this.lessonConfId,
-            // conference_password: this.lessonConfPass,
-            // type_of_week: 1
-          };
+          let formData = {};
+          if (this.startTime) formData.start_time = this.startTime;
+          if (this.endTime) formData.end_time = this.endTime;
+          if (this.formattedDateDB) formData.lesson_date = this.formattedDateDB;
+          if (this.lessonName) formData.lesson_name = this.lessonName;
+          if (this.lessonConfId) formData.conference_id = this.lessonConfId;
+          if (this.lessonConfPass) formData.conference_password = this.lessonConfPass;
+
           const lessonId = this.lesson.id;
           axios.post(`/api/update/${lessonId}`, formData)
             .then(response => {
               console.log(response.data);
+              if (this.startTime) this.lesson.start_time = this.startTime;
+              if (this.endTime) this.lesson.end_time = this.endTime;
+              if (this.formattedDateDB) this.lesson.lesson_date = this.formattedDateDB;
+              if (this.lessonName) this.lesson.lesson_name = this.lessonName;
+              if (this.lessonConfId) this.lesson.conference_id = this.lessonConfId;
+              if (this.lessonConfPass) this.lesson.conference_password = this.lessonConfPass;
             })
             .catch(error => {
               console.error(error);
