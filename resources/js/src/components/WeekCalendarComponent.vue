@@ -12,15 +12,24 @@
         </div>
     </div>
     
-    <div class="sch-wrapper">
-        <div class="day-of-week" v-for="(day, index) in week" :key="index">
+    <v-container>
+    <v-row>
+      <v-col
+        v-for="(day, index) in week"
+        class="day-of-week"
+        :key="index"
+        cols="12"
+        sm="4"
+        md="2"
+      >
             <div class="dayName">
                 <p class="weekday">{{ day.toLocaleString('uk-UA', {weekday: 'short'})}}</p>
                 <h3 class="day">{{ day.getDate() }}</h3>
             </div>
             <WeekLesson :lessons="lessonsByDate[day.toISOString().substring(0, 10)] || []"/>
-        </div>
-    </div>
+    </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -144,11 +153,11 @@ export default {
     justify-content: space-between;
 }
 .day-of-week {
-    flex: 1 0 0;
+    /* flex: 1 0 0; */
     border-right: 1px solid grey;
     padding: 10px;
     box-sizing: border-box;
-    min-width: 150px;
+    /* min-width: 150px; */
 }
 .weekday {
     text-transform: capitalize;

@@ -1,11 +1,4 @@
 <template>
-    <!-- <div>
-        <router-link to="/login">Login</router-link>
-        <router-link to="/register">Register</router-link>
-        <router-link to="/week-sch-student">Розклад студента</router-link>
-        <a @click.prevent="logout" href="#">Вийти</a>
-        <router-view></router-view>
-    </div> -->
     <v-card>
     <v-layout>
       <v-navigation-drawer

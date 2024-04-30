@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
 Route::get("sorted-lessons", [LessonController::class, 'getSortedLessons']);
-// Route::get("get-role", [UserController::class, 'getRole']);
+Route::post("update/{id}", [LessonController::class, 'update']);
 
 
 //Protected routes 

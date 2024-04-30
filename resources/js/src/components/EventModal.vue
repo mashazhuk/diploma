@@ -6,13 +6,11 @@
     >
     <v-card
       class="ma-4"
-      color="#2f3136"
       rounded="lg"
       variant="flat"
       max-width="650"
       min-height="300"
       width="400"
-      theme="dark"
     >
     
       <v-card-item>
@@ -76,11 +74,9 @@ export default {
     },
 
     methods: {
-      transformTime(dateTime) {
-        let date = new Date(dateTime);
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        return hours + ":" + minutes;
+      transformTime(time) {
+        const [hours, minutes] = time.split(':');
+        return `${hours}:${minutes}`;
         
       },
 

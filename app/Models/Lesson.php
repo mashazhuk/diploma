@@ -10,10 +10,12 @@ class Lesson extends Model
     use HasFactory;
     protected $fillable = [
         'lesson_name',
+        'lesson_date',
         'start_time',
         'end_time',
         'conference_id',
-        'conference_password'
+        'conference_password',
+        'type_of_week'
     ];
 }
  

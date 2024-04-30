@@ -15,14 +15,17 @@ class LessonController extends Controller
 
     public function getSortedLessons() {
         $lessons = Lesson::all();
-        $lessonsByDate = $lessons->groupBy(function ($item) {
-            return Carbon::parse($item->start_time)->format('Y-m-d');
-        })->map(function ($lessonsOnSameDate) {
-            return $lessonsOnSameDate->sortBy(function ($lesson) {
-                return Carbon::parse($lesson->start_time)->format('H:i:s');
-            }) -> values();
+        $lessonsByDate = $lessons->groupBy('lesson_date')->map(function ($lessonsOnSameDate) {
+            return $lessonsOnSameDate->sortBy('start_time')->values();
         });
 
         return response()->json($lessonsByDate);
     }
+
+    public function update(Request $request, $id) {
+        $lesson = Lesson::find($id);
+        $lesson->update($request->all());
+        return response()->json($lesson, 200);
+    }
+
 }
