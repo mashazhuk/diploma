@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ApiController extends Controller
@@ -19,15 +20,18 @@ class ApiController extends Controller
         ]);
 
         //User
-        User::create([
+        $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" =>bcrypt($request->password)
         ]);
 
+        $token = $user->createToken("mytoken")->plainTextToken;
+
         return response()->json([
             "status" => true,
             "message" => "User registered successfully",
+            "token" => $token,
             "data" => []
         ]);
 
@@ -47,6 +51,7 @@ class ApiController extends Controller
             if(Hash::check($request->password, $user->password)) {
                 //Password matched
                 $token = $user->createToken("mytoken")->plainTextToken;
+
 
                 return response()->json([
                     "status" => true,
@@ -83,12 +88,21 @@ class ApiController extends Controller
     }
 
     public function logout() {
-        auth()->user()->tokens()->delete();
+        $userData = auth()->user();
+        // Auth::user()->tokens()->delete();
+        // auth()->user()->tokens()->delete();
         
         return response()->json([
             "status" => true,
             "message" => "User logged out",
-            "data" => []
+            "data" => $userData
         ]);
+    //     $request->user()->tokens()->delete();
+
+    // $request->session()->invalidate();
+
+    // $request->session()->regenerateToken();
+
+    // return response()->json(['message' => 'User logged out successfully']);
     }
 }

@@ -13,6 +13,7 @@
           v-model="email"
           :counter="30"
           prepend-inner-icon="mdi-email-outline"
+          :rules="emailRules"
           label="Email"
           type="email"
           variant="outlined"
@@ -22,6 +23,7 @@
           v-model="password"
           :counter="50"
           :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
+          :rules="passwordRules"
           :type="visible ? 'text' : 'password'"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
@@ -66,11 +68,17 @@ import axios from 'axios';
         visible: false,
         form: false,
         loading: false,
+
+        passwordRules: [
+          value => !!value || 'Заповніть поле.',
+          v => v.length >= 6 || 'Мінімум 6 символів',
+      ],
+
         
-      //   emailRules: [
-      //   v => !!v || 'Email is required',
-      //   v => (v && v.length <= 10) || 'Email must be less than 10 characters',
-      // ],
+        emailRules: [
+        v => !!v || 'Заповніть поле',
+        v => (v && v.length >= 10) || 'Мінімум 10 символів',
+      ],
       }),
       methods: {
         async validate() {

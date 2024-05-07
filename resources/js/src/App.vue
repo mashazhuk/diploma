@@ -1,39 +1,6 @@
 <template>
     <v-card>
     <v-layout>
-      <v-navigation-drawer
-        permanent
-        app
-        expand-on-hover
-        rail
-      >
-        <v-list>
-          <v-list-item
-            prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-            subtitle="sandra_a88@gmailcom"
-            title="Sandra Adams"
-          ></v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-        
-        <router-link class="nav-link" to="/"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
-          <router-link class="nav-link" to="/week-sch-student"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
-          <router-link class="nav-link" to="/login"><v-list-item prepend-icon="mdi-account-multiple" title="Login" value="login"></v-list-item></router-link>
-          <router-link class="nav-link" to="/register"><v-list-item prepend-icon="mdi-account-multiple" title="Register" value="register"></v-list-item></router-link>
-          <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
-        </v-list>
-        <template v-slot:append>
-          <div class="pa-2">
-                <v-list density="compact" nav>
-                    <v-list-item prepend-icon="mdi-logout"><v-btn @click.prevent="logout" >Logout</v-btn></v-list-item>
-                </v-list>
-          </div>
-        </template>
-      </v-navigation-drawer>
-
       <v-main class="main">
         <router-view />
       </v-main>
@@ -48,24 +15,59 @@
 }
 .main {
   margin-left: 20px;
+  overflow-y: auto;
   height: 100vh;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(77, 77, 77) transparent;
+}
+
+
+/* Работает в Chrome, Edge и Safari */
+.main::-webkit-scrollbar {
+  width: 4px;
+}
+
+.main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main::-webkit-scrollbar-thumb {
+  background-color: rgb(77, 77, 77);
+  border-radius: 20px;
+  width: 4px;
+  border: 3px transparent;
 }
 </style>
 
 <script>
-
 export default {
     name: 'App',
 
     methods: {
+        
+
         logout() {
-            axios.get('/api/logout')
-            .then(res => {
-                localStorage.removeItem('x_xsrf_token'),
+          localStorage.removeItem('x_xsrf_token'),
                 localStorage.removeItem('token'),
                 this.$router.push('/login')
-            })
-        },
+        //     const token = localStorage.getItem('token');
+        //     axios.get('/sanctum/csrf-cookie') .then(response => { 
+        //     axios.post('/api/logout', {
+        //       headers: {
+        //              'Authorization': `Bearer ${token}`
+        //             }
+        //     })
+        //     .then(res => {
+        //         localStorage.removeItem('x_xsrf_token'),
+        //         localStorage.removeItem('token'),
+        //         this.$router.push('/login')
+        //     })
+        //     .catch(error => {
+        //         console.error('Error logging out:', error);
+        //     });
+        // })
+      
     },
+}
 }
 </script>

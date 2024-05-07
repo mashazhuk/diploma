@@ -10,7 +10,7 @@
             </v-btn>
     </div>
     <eventModal @close="dialog = false" :dialog="dialog" :lesson="selectedLesson"></eventModal>
-    <event-edit-modal @close="edit_dialog = false" :dialog="edit_dialog" :lesson="selectedLesson" />
+    <event-edit-modal @close="edit_dialog = false" :dialog="edit_dialog" :lesson="selectedLesson" @update-lessons="$emit('update-lessons')" />
 
 </template>
     
@@ -23,6 +23,7 @@ export default {
         EventEditModal
     },
     name: 'WeekLesson',
+    emits: ['update-lessons'],
     data() {
         return {
             selectedLesson: {},
@@ -33,7 +34,7 @@ export default {
     },
 
     props: {
-        lessons: Array,
+        lessons: Array
     },
 
     mounted() {
@@ -57,7 +58,7 @@ export default {
         },
         getRole() {
             this.role = localStorage.getItem('role');
-        }
+        },
     }
 }
 </script>
@@ -66,7 +67,7 @@ export default {
 
 .btn-lesson {
     margin-top: 10px;
-    width: 100%;
+    width: 99%;
     overflow: hidden;    
     display: flex;
     align-items: center;

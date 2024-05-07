@@ -9,6 +9,14 @@
         v-model="form"
         @submit.prevent="register"
         > 
+        <v-text-field
+          v-model="name"
+          :counter="30"
+          prepend-inner-icon="mdi-account"
+          label="Ім'я"
+          variant="outlined"
+          required
+        ></v-text-field>
     <v-text-field
           v-model="email"
           :counter="30"
@@ -23,6 +31,7 @@
           :counter="50"
           :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
           :type="visible ? 'text' : 'password'"
+          :rules="[passwordRules.required, passwordRules.min ]"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
           @click:append-inner="visible = !visible"
@@ -35,6 +44,7 @@
           :counter="50"
           :append-inner-icon="visible_conf ? 'mdi-eye' : 'mdi-eye-off'"
           :type="visible_conf ? 'text' : 'password'"
+          :rules="[passwordRules.required, passwordRules.min]"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
           @click:append-inner="visible_conf = !visible_conf"
@@ -80,10 +90,16 @@ import axios from 'axios';
         visible_conf: false,
         form: false,
         loading: false,
-      //   emailRules: [
-      //   v => !!v || 'Email is required',
-      //   v => (v && v.length <= 10) || 'Email must be less than 10 characters',
-      // ],
+        passwordRules: {
+          required: value => !!value || 'Заповніть поле.',
+          min: v => v.length >= 6 || 'Мінімум 6 символів',
+          // passMatch: v => v === this.password || "Паролі не співпадають",
+        },
+
+        emailRules: [
+          v => !!v || 'Заповніть поле',
+          v => (v && v.length >= 10) || 'Мінімум 10 символів',
+        ],
       }),
       methods: {
         async validate() {
@@ -102,6 +118,7 @@ import axios from 'axios';
                 console.log(resp),
                 localStorage.setItem('x_xsrf_token', resp.config.headers['X-XSRF-TOKEN']);
                 localStorage.setItem('token', resp.data.token);
+                this.$router.push('/week-sch-student');
             }) 
               .catch(error => { console.log(error); }); 
             }) 

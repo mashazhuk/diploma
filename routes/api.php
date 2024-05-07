@@ -17,8 +17,8 @@ Route::post("update/{id}", [LessonController::class, 'update']);
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function() {
+    Route::post('logout', [ApiController::class, "logout"]);
     Route::get('profile', [ApiController::class, "profile"]);
-    Route::get('logout', [ApiController::class, "logout"]);
     Route::get("get-role", [UserController::class, 'getRole']);
     
 });

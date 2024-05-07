@@ -1,14 +1,12 @@
 <template>
+    <Menu></Menu>
+
     <div class="calendar-header">
         <h3>{{ month }}</h3>
-        <div>
-            <button @click="changeWeek(-1)">
-                <v-icon icon="mdi-arrow-left-drop-circle-outline"></v-icon>
-            </button>
-            <button @click="goToToday">Сьогодні</button>
-            <button @click="changeWeek(1)">
-                <v-icon icon="mdi-arrow-right-drop-circle-outline"></v-icon>
-            </button>
+        <div class="calendar-header right">
+            <v-btn @click="changeWeek(-1)" density="compact" icon="mdi-chevron-left"></v-btn>
+            <v-btn @click="goToToday" variant="plain" density="compact" class="pa-0">Сьогодні</v-btn>
+            <v-btn @click="changeWeek(1)" density="compact" icon="mdi-chevron-right"></v-btn>
         </div>
     </div>
     
@@ -16,29 +14,41 @@
     <v-row>
       <v-col
         v-for="(day, index) in week"
-        class="day-of-week"
         :key="index"
         cols="12"
         sm="4"
-        md="2"
+        md="4"
+        lg="2"
       >
-            <div class="dayName">
-                <p class="weekday">{{ day.toLocaleString('uk-UA', {weekday: 'short'})}}</p>
-                <h3 class="day">{{ day.getDate() }}</h3>
+      <v-card
+      class="day-of-week"
+        color="indigo-accent-2"
+        variant="outlined"
+      >
+
+      <v-card-item>
+          <div class="dayName">
+            <div class="text-overline mb-1 weekDay">
+              {{ day.toLocaleString('uk-UA', {weekday: 'short'}) }}
             </div>
-            <WeekLesson :lessons="lessonsByDate[day.toLocaleDateString('en-CA')] || []"/>
+            <div class="text-h6 mb-1 day" :class="{ today: isToday(day) }">{{ day.getDate() }}</div>
+          </div>
+          <WeekLesson :lessons="lessonsByDate[day.toLocaleDateString('en-CA')] || []" @update-lessons="getLessonsByDate"/>
+        </v-card-item>
+        </v-card>
     </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-
+import Menu from './Menu.vue'
 import WeekLesson from './WeekLesson.vue';
 
 export default {
         components: {
-            WeekLesson
+            WeekLesson,
+            Menu
         },
         name: 'WeekCalendar',
         data() {
@@ -55,7 +65,6 @@ export default {
             this.updateCalendar();
             this.getLessonsByDate();
             this.getRole();
-            // this.fetchProfile();
             
         },
         methods: {
@@ -104,6 +113,11 @@ export default {
                         this.role = res.data.role;
                         localStorage.setItem('role', res.data.role);
                     })
+                    // .catch(error => {
+                    //     if(error.response.status === 401) {
+                    //         this.$router.push('/login');
+                    //     }
+                    // })
             },
 
            
@@ -119,48 +133,61 @@ export default {
                     
             },
 
-        //     fetchProfile() {
-        //     const token = localStorage.getItem('token');
-        //     axios.get('/api/profile', {
-        //         headers: {
-        //              'Authorization': `Bearer ${token}`
-        //             }
-        //     })
-        //         .then(response => {
-        //             // Успешный ответ от сервера
-        //            console.log(response.data.data);
-        //         })
-        //         .catch(error => {
-        //             if (error.response && error.response.status === 401) {
-        //     // Токен недействителен, перенаправляем на страницу входа
-        //                 this.$router.push('/login');
-        //             } else {
-        //     // Другая ошибка, можно обработать по-другому, например, показать сообщение об ошибке
-        //             console.error('Ошибка при запросе профиля:', error);
-        //             }
-        //         });
-        // }
+            isToday(day) {
+        const today = new Date();
+        return day.getDate() === today.getDate() &&
+            day.getMonth() === today.getMonth() &&
+            day.getFullYear() === today.getFullYear();
+    },
         }
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .calendar-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    height: 100px;
+
+    h3 {
+        text-transform: capitalize;        
+     }
+
+    .right {
+        margin-right: 40px;
+    }   
+
+
 }
 .sch-wrapper {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
-.day-of-week {
-    /* flex: 1 0 0; */
-    border-right: 1px solid grey;
-    padding: 10px;
-    box-sizing: border-box;
-    /* min-width: 150px; */
+
+@media (min-width: 600px) and (max-width: 1280px) {
+    .day-of-week {
+        /* другие стили... */
+        height: 30vh; /* Устанавливает высоту равной 60% от высоты вьюпорта */
+    }
 }
+
+@media (min-width: 1280px) {
+    .day-of-week {
+        /* другие стили... */
+        height: 60vh; /* Устанавливает высоту равной 60% от высоты вьюпорта */
+    }
+}
+
+.day-of-week {
+    overflow-y: auto;
+}
+
+.today {
+    color: #29B6F6;
+}
+
 .weekday {
     text-transform: capitalize;
 }

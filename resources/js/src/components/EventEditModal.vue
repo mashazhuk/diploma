@@ -55,8 +55,8 @@
           v-model="formattedDateForm"
           :active="menu2"
           :focus="menu2"
-          label="Picker in menu"
-          prepend-icon="mdi-clock-time-four-outline"
+          :label="new Date(lesson.lesson_date).toLocaleDateString('uk-UA')"
+          prepend-icon="mdi-calendar"
           readonly
           @click.stop
 
@@ -109,19 +109,40 @@
             ></v-text-field>
   
           </div>
+
+          
+          <v-btn height="48"
+            >
+            Скасувати
+          </v-btn>
           <v-btn
             :loading="loading"
-            class="mb-8" 
+            class="flex-grow-1" 
             color="blue" 
             size="large" 
             variant="tonal" 
-            block 
+            height="48"
             type="submit"
             >
             Редагувати
           </v-btn>
+
         </v-card-item>
+        
         </v-form>
+        <!-- <v-slot:actions>
+      <v-btn height="48"> No Thanks </v-btn>
+
+      <v-btn
+        :loading="loading"
+        class="flex-grow-1"
+        height="48"
+        variant="tonal"
+        
+      >
+        Take Checkup
+      </v-btn>
+        </v-slot:actions> -->
       </v-card>
     </v-dialog>
   </template>
@@ -136,6 +157,10 @@
           lesson: Object,
           dialog: Boolean,
       },
+      emits: [
+        'update-lessons',
+        'close'
+      ],
       data() {
         return {
           showDialog: this.dialog,
@@ -199,10 +224,14 @@
               if (this.lessonName) this.lesson.lesson_name = this.lessonName;
               if (this.lessonConfId) this.lesson.conference_id = this.lessonConfId;
               if (this.lessonConfPass) this.lesson.conference_password = this.lessonConfPass;
+
+              this.$emit('update-lessons');
             })
             .catch(error => {
               console.error(error);
             });
+
+
         },
 
         transformTime(time) {

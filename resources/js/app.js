@@ -9,7 +9,25 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
+import axios from 'axios';
 import { createI18n } from 'vue-i18n'
+
+// Добавьте перехватчик ответов
+axios.interceptors.response.use(
+  response => {
+    // Если ответ успешный, просто продолжайте
+    return response;
+  },
+  error => {
+    // Если статус ответа 401, перенаправьте на страницу входа
+    if (error.response && error.response.status === 401) {
+      router.push('/login');
+    }
+
+    // Важно продолжить генерировать ошибку, чтобы не прерывать цепочку промисов
+    return Promise.reject(error);
+  }
+);
 
 
 const vuetify = createVuetify({
