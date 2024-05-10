@@ -22,7 +22,6 @@
             <v-text-field
             v-model="startTime"
             prepend-icon="mdi-clock-time-four-outline"
-            :label="transformTime(lesson.start_time)"
             single-line
             density="compact"
             variant="underlined"
@@ -37,7 +36,6 @@
         <v-text-field
           v-model="endTime"
           prepend-icon="mdi-minus"
-          :label="transformTime(lesson.end_time)"
           single-line
           variant="underlined"
           density="compact"
@@ -55,7 +53,7 @@
           v-model="formattedDateForm"
           :active="menu2"
           :focus="menu2"
-          :label="new Date(lesson.lesson_date).toLocaleDateString('uk-UA')"
+          :label="new Date(day).toLocaleDateString('uk-UA')"
           prepend-icon="mdi-calendar"
           readonly
           @click.stop
@@ -81,7 +79,6 @@
           <label>Назва уроку</label>
             <v-text-field
               v-model="lessonName"
-              :label="lesson.lesson_name"
               single-line
               variant="underlined"
               density="compact"
@@ -91,7 +88,6 @@
             <label>ID конференції</label>
             <v-text-field
               v-model="lessonConfId"
-              :label="lesson.conference_id"
               single-line
               variant="underlined"
               density="compact"
@@ -101,7 +97,6 @@
             <label>Пароль конференції</label>
             <v-text-field
               v-model="lessonConfPass"
-              :label="lesson.conference_password"
               single-line
               variant="underlined"
               density="compact"
@@ -109,16 +104,23 @@
             ></v-text-field>
   
           </div>
-          <div class="d-flex  justify-space-between align-center">
-  <div>
-    <v-btn height="48" variant="plain" density="compact">Скасувати</v-btn>
-    <v-btn :loading="loading" color="blue" size="large" variant="tonal" height="48" type="submit">Редагувати</v-btn>
-  </div>
-  <div>
-    <v-btn variant="plain" density="compact" color="error" icon="mdi-delete" @click.stop @click="openConfirmModal"></v-btn>
-  </div>
-</div>
-<confirm-deleting-lesson @close="confirm_dialog = false" :dialog="confirm_dialog" :lesson="lesson" @update-lessons="$emit('update-lessons')"></confirm-deleting-lesson>
+
+          
+          <v-btn height="48" variant="plain" density="compact" 
+            >
+            Скасувати
+          </v-btn>
+          <v-btn
+            :loading="loading"
+            class="flex-grow-1" 
+            color="blue" 
+            size="large" 
+            variant="tonal" 
+            height="48"
+            type="submit"
+            >
+            Редагувати
+          </v-btn>
 
         </v-card-item>
         
@@ -130,13 +132,11 @@
   
   <script>
   import axios from 'axios';
-import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
 
   export default {
-  components: { ConfirmDeletingLesson },
-      name: 'eventEditModal',
+      name: 'eventAddModal',
       props: {
-          lesson: Object,
+          day: Object,
           dialog: Boolean,
       },
       emits: [
@@ -145,7 +145,6 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
       ],
       data() {
         return {
-          confirm_dialog: false,
           showDialog: this.dialog,
           startTime: null,
           endTime: null,
@@ -176,7 +175,7 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
         },
 
         formattedDateDB() {
-          return this.date ? new Date(this.date).toLocaleDateString('en-CA') : null;
+          return this.day ? new Date(this.day).toLocaleDateString('en-CA') : null;
         }
       },
   
@@ -188,10 +187,6 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
   
       methods: {
 
-        openConfirmModal() {
-            this.confirm_dialog = true;
-        },
-
         submitForm() {
           let formData = {};
           if (this.startTime) formData.start_time = this.startTime;
@@ -200,18 +195,11 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
           if (this.lessonName) formData.lesson_name = this.lessonName;
           if (this.lessonConfId) formData.conference_id = this.lessonConfId;
           if (this.lessonConfPass) formData.conference_password = this.lessonConfPass;
+          formData.type_of_week = 1;
 
-          const lessonId = this.lesson.id;
-          axios.post(`/api/update/${lessonId}`, formData)
+          axios.post('/api/add-lesson', formData)
             .then(response => {
               console.log(response.data);
-              if (this.startTime) this.lesson.start_time = this.startTime;
-              if (this.endTime) this.lesson.end_time = this.endTime;
-              if (this.formattedDateDB) this.lesson.lesson_date = this.formattedDateDB;
-              if (this.lessonName) this.lesson.lesson_name = this.lessonName;
-              if (this.lessonConfId) this.lesson.conference_id = this.lessonConfId;
-              if (this.lessonConfPass) this.lesson.conference_password = this.lessonConfPass;
-
               this.$emit('update-lessons');
             })
             .catch(error => {

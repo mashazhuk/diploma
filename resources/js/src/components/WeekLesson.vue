@@ -44,7 +44,6 @@ export default {
         openModal(lesson) {
             this.selectedLesson = lesson;
             this.dialog = true;
-            console.log(this.selectedLesson)
         },
 
         openEditModal(lesson) {

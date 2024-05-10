@@ -20,12 +20,13 @@
         md="4"
         lg="2"
       >
+      <v-hover v-slot="{ isHovering, props }">
       <v-card
       class="day-of-week"
         color="indigo-accent-2"
         variant="outlined"
+        v-bind="props"
       >
-
       <v-card-item>
           <div class="dayName">
             <div class="text-overline mb-1 weekDay">
@@ -34,8 +35,17 @@
             <div class="text-h6 mb-1 day" :class="{ today: isToday(day) }">{{ day.getDate() }}</div>
           </div>
           <WeekLesson :lessons="lessonsByDate[day.toLocaleDateString('en-CA')] || []" @update-lessons="getLessonsByDate"/>
+          <div class="d-flex justify-center align-end mb-6" v-if="isHovering && role === 'admin'">
+            <v-btn
+            @click="openModal(day)"
+            icon="mdi-plus"
+            variant="text"
+            ></v-btn>
+            </div>
+            <event-add-modal @close="dialog = false" :dialog="dialog" :day="selectedDay" @update-lessons="getLessonsByDate"></event-add-modal>
         </v-card-item>
         </v-card>
+      </v-hover>
     </v-col>
     </v-row>
   </v-container>
@@ -44,11 +54,13 @@
 <script>
 import Menu from './Menu.vue'
 import WeekLesson from './WeekLesson.vue';
+import EventAddModal from './EventAddModal.vue';
 
 export default {
         components: {
             WeekLesson,
-            Menu
+            Menu,
+            EventAddModal
         },
         name: 'WeekCalendar',
         data() {
@@ -57,6 +69,8 @@ export default {
                 month: '',
                 current: new Date(),
                 lessonsByDate: [],
+                dialog: false,
+                selectedDay: {},
                 role: ''
             }
         },
@@ -74,15 +88,20 @@ export default {
             },
 
             getWeek() {
-    let week = [];
-    let first = this.current.getDate() - this.current.getDay() + (this.current.getDay() === 0 ? -6 : 1);
-    for (let i = 0; i < 6; i++) {
-        let day = new Date(this.current.getFullYear(), this.current.getMonth(), first + i);
-        week.push(day);
-    }
-    return week;
+                let week = [];
+                let first = this.current.getDate() - this.current.getDay() + (this.current.getDay() === 0 ? -6 : 1);
+                for (let i = 0; i < 6; i++) {
+                    let day = new Date(this.current.getFullYear(), this.current.getMonth(), first + i);
+                    week.push(day);
+                }
+                return week;
 
-},
+            },
+
+            openModal(day) {
+                this.selectedDay = day;
+                this.dialog = true;
+            },
 
 
             getMonthName() {
