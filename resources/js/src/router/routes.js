@@ -4,23 +4,14 @@
 import Login from "../pages/Login.vue";
 import Register from "../pages/Register.vue";
 import WeekCalendar from "../components/WeekCalendarComponent.vue";
-import Example from "../components/ExampleComponent.vue";
+import ExampleComponent from "../components/ExampleComponent.vue";
+import EditProfile from "../pages/EditProfile.vue";
 
 const routes = [
     {
         path: '/',
-        component: Example
+        component: ExampleComponent
     },
-    
-    // {
-    //     path: '/week-sch-student',
-    //     component: WeekScheduleStudent
-    // },
-
-    // {
-    //     path: '/daily-sch-teacher',
-    //     component: DailyScheduleTeacher
-    // },
 
     {
         path: '/register',
@@ -37,7 +28,12 @@ const routes = [
     {
         path: '/week-sch-student',
         component: WeekCalendar
-    }
+    },
+
+    {
+        path: '/edit-profile',
+        component: EditProfile
+    },
 ];
 
 export default routes;

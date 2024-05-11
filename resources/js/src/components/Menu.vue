@@ -6,18 +6,20 @@
         rail
       >
         <v-list>
-          <v-list-item
-            prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-            :subtitle="user.email"
-            :title="user.name"
-          ></v-list-item>
+          <router-link class="nav-link" to="/edit-profile">
+            <v-list-item
+              prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+              :subtitle="user.email"
+              :title="user.name"
+            ></v-list-item>
+          </router-link>
         </v-list>
 
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
         
-        <router-link class="nav-link" to="/"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
+        <!-- <router-link class="nav-link" to="/"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link> -->
           <router-link class="nav-link" to="/week-sch-student"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
           <router-link class="nav-link" to="/login"><v-list-item prepend-icon="mdi-account-multiple" title="Login" value="login"></v-list-item></router-link>
           <router-link class="nav-link" to="/register"><v-list-item prepend-icon="mdi-account-multiple" title="Register" value="register"></v-list-item></router-link>

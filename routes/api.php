@@ -14,13 +14,16 @@ Route::post("update/{id}", [LessonController::class, 'update']);
 Route::post("add-lesson", [LessonController::class, 'addLesson']);
 Route::post("delete-lesson/{id}", [LessonController::class, 'deleteLesson']);
 
+
 //Protected routes 
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function() {
     Route::post('logout', [ApiController::class, "logout"]);
     Route::get('profile', [ApiController::class, "profile"]);
+    Route::post('edit-profile', [ApiController::class, 'editProfile']);
     Route::get("get-role", [UserController::class, 'getRole']);
+    
     
 });
 

@@ -87,6 +87,25 @@ class ApiController extends Controller
         ]);
     }
 
+    public function editProfile(Request $request) {
+        // $user = auth()->user();
+        // $user->update($request->all());
+    
+        // return response()->json([
+        //     "status" => true,
+        //     "message" => "Інформація про профіль",
+        //     "data" => $user 
+        // ]);
+        $user = auth()->user();
+        $user->update($request->all());
+
+        return response()->json([
+            "status" => true,
+            "message"=>"Edit profiiile",
+            "data" => $user
+        ]);
+    }
+
     public function logout() {
         $userData = auth()->user();
         // Auth::user()->tokens()->delete();
