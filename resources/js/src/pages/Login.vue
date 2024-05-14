@@ -55,6 +55,15 @@
               </router-link>
            </v-card-text>
    </v-card>
+
+   <v-alert
+    density="compact"
+    class="alert"
+    v-model="showAlert"
+    text="Спробуйте ввести пароль ще раз"
+    title="Невірний пароль"
+    type="error"
+  ></v-alert>
   </template>
   
   <script>
@@ -68,6 +77,7 @@ import axios from 'axios';
         visible: false,
         form: false,
         loading: false,
+        showAlert: false,
 
         passwordRules: [
           value => !!value || 'Заповніть поле.',
@@ -90,14 +100,32 @@ import axios from 'axios';
           axios.get('/sanctum/csrf-cookie') .then(response => { 
             axios.post('/api/login', { email: this.email, password: this.password }) 
               .then(resp => { 
-                console.log(resp),
-                localStorage.setItem('x_xsrf_token', resp.config.headers['X-XSRF-TOKEN']);
-                localStorage.setItem('token', resp.data.token);
-                this.$router.push('/week-sch-student');
+                this.loading = false;
+                  localStorage.setItem('x_xsrf_token', resp.config.headers['X-XSRF-TOKEN']);
+                  localStorage.setItem('token', resp.data.token);
+                  this.$router.push('/week-sch-student');
+                
               }) 
-              .catch(error => { console.log(error); }); 
+              .catch(error => {
+                this.loading = false;
+                console.log(error); 
+                if (error.response && error.response.status === 422) {
+                    // Неправильный пароль
+                    this.showAlert = true;
+                    setTimeout(() => {
+                      this.showAlert = false;
+                    }, 5000);
+                } else {
+                    // Другая ошибка
+                    alert('Помилка. Спробуйте ще раз');
+                }
+              
+              }); 
             }) 
-            .catch(err => { console.log(err); });
+            .catch(err => { 
+              console.log(err); 
+              this.loading = false;
+            });
         },
       }
     }
@@ -107,6 +135,13 @@ import axios from 'axios';
 .wrapper {
   top: 50%;
   transform: translateY(-50%);
+}
+
+.alert {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>
   

@@ -34,7 +34,8 @@ export default {
     },
 
     props: {
-        lessons: Array
+        lessons: Object,
+        typeOfWeek: Number
     },
 
     mounted() {

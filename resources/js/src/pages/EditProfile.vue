@@ -1,28 +1,55 @@
 <template>
     <Menu></Menu>
-
-    <v-card
-       class="wrapper mx-auto pa-12 pb-8" 
-       elevation="8"
-       rounded="lg"
-     >      
-       <v-form 
+    <!-- <div class="d-flex justify-center mb-6"> -->
+    <v-form 
          v-model="form"
          @submit.prevent="editProfile"
-         >
-         <v-text-field
+         style="width: 90%; margin-top: 20px;"
+    >
+    
+      <v-row>
+        <v-col cols="4"
+        md="1"
+        lg="1">
+          <v-list-subheader>Ім'я</v-list-subheader>
+        </v-col>
+
+        <v-col 
+          cols="8"
+          sm="8"
+          md="4"
+          lg="4">
+          <v-text-field
            :counter="30"
+           density="compact"
            prepend-inner-icon="mdi-account"
            
            v-model="name"
            :placeholder="user.name"
            type="name"
            variant="outlined"
+           
            required
          ></v-text-field>
+        </v-col>
+      </v-row>
 
-         <v-text-field
+      <v-row>
+        <v-col cols="4"
+        md="1"
+        lg="1">
+          <v-list-subheader>Email</v-list-subheader>
+        </v-col>
+
+        <v-col 
+        cols="8"
+          sm="8"
+          md="4"
+          lg="4"
+        >
+          <v-text-field
            v-model="email"
+           density="compact"
            :counter="30"
            prepend-inner-icon="mdi-email-outline"
            
@@ -31,8 +58,24 @@
            variant="outlined"
            required
          ></v-text-field>
-         <v-text-field
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="4"
+        md="1"
+        lg="1">
+          <v-list-subheader>Пароль</v-list-subheader>
+        </v-col>
+
+        <v-col 
+        cols="8"
+          sm="8"
+          md="4"
+          lg="4">
+          <v-text-field
            v-model="password"
+           density="compact"
            :counter="50"
            :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
            
@@ -44,29 +87,32 @@
            label="Пароль"
            required
          ></v-text-field>
- 
-           <v-btn 
+        </v-col>
+      </v-row>
+      <v-spacer></v-spacer>
+      <div class="d-flex">      
+          <v-btn 
              :disabled="!form"
              :loading="loading"
-             class="mb-8" 
+             class="me-2 text-none"
              color="blue" 
-             size="large" 
+             size="large"
              variant="tonal" 
-             block 
              type="submit"
              >
-             Увійти
+             Оновити профіль
            </v-btn>
+            <v-btn 
+             :disabled="!form"
+             :loading="loading"
+             class="me-2 text-none"
+             size="large"
+             >
+             Скасувати
+           </v-btn>
+           </div>
        </v-form>
-           <v-card-text class="text-center">
-               <router-link to="/register"
-                 class="text-blue text-decoration-none"
-                 rel="noopener noreferrer"
-               >
-                 Немає акаунту? Зареєструватися <v-icon icon="mdi-chevron-right"></v-icon>
-               </router-link>
-            </v-card-text>
-    </v-card>
+       
    </template>
    
    <script>
@@ -138,9 +184,9 @@
 
          editProfile() {
           let formData = {};
-          formData.name = this.name;
-          formData.email = this.email;
-          formData.password = this.password;
+          if(this.name) formData.name = this.name;
+          if(this.email) formData.email = this.email;
+          if(this.password) formData.password = this.password;
           formData.role = this.role;
           const token = localStorage.getItem('token');
            this.loading = true;
@@ -152,7 +198,10 @@
             }
              )
                .then(resp => { 
-                 console.log(resp)
+                 console.log(resp);
+                 if(this.name) formData.name = this.name;
+                  if(this.email) formData.email = this.email;
+                  if(this.password) formData.password = this.password;
                  this.loading = false;
                }) 
                .catch(error => { 

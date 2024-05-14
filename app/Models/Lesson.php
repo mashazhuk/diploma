@@ -15,7 +15,8 @@ class Lesson extends Model
         'end_time',
         'conference_id',
         'conference_password',
-        'type_of_week'
+        'type_of_week',
+        'weekday'
     ];
 }
  

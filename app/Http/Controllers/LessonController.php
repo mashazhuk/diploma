@@ -15,8 +15,10 @@ class LessonController extends Controller
 
     public function getSortedLessons() {
         $lessons = Lesson::all();
-        $lessonsByDate = $lessons->groupBy('lesson_date')->map(function ($lessonsOnSameDate) {
-            return $lessonsOnSameDate->sortBy('start_time')->values();
+        $lessonsByDate = $lessons->groupBy('type_of_week')->map(function ($lessonsOnSameDay) {
+            return $lessonsOnSameDay->groupBy('weekday')->map(function ($lessonsOnSameTypeOfWeek) {
+                return $lessonsOnSameTypeOfWeek->sortBy('start_time');
+            });
         });
 
         return response()->json($lessonsByDate);
@@ -29,15 +31,16 @@ class LessonController extends Controller
     }
 
     public function addLesson(Request $request) {
-        Lesson::create([
-            "lesson_name" => $request->lesson_name,
-            "lesson_date" => $request->lesson_date,
-            "start_time" => $request->start_time,
-            "end_time" => $request->end_time,
-            "conference_id" => $request->conference_id,
-            "conference_password" => $request->conference_password,
-            "type_of_week" => $request->type_of_week
-        ]);
+        Lesson::create($request->all());
+        // Lesson::create([
+        //     "lesson_name" => $request->lesson_name,
+        //     "lesson_date" => $request->lesson_date,
+        //     "start_time" => $request->start_time,
+        //     "end_time" => $request->end_time,
+        //     "conference_id" => $request->conference_id,
+        //     "conference_password" => $request->conference_password,
+        //     "type_of_week" => $request->type_of_week
+        // ]);
 
         return response()->json('Урок успішно додано!');
     }

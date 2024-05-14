@@ -16,11 +16,11 @@ class UserController extends Controller
         return response()->json(['role' => $role]);
     }
 
-    public function editProfile(Request $request)
-    {
-        $id = Auth::user()->id;
-        $user = User::find($id);
-        $user->update($request->all());
-        return response()->json($user, 200);
-    }
+    // public function editProfile(Request $request)
+    // {
+    //     $id = Auth::user()->id;
+    //     $user = User::find($id);
+    //     $user->update($request->all());
+    //     return response()->json($user, 200);
+    // }
 }

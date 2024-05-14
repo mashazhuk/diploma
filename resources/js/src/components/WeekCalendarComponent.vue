@@ -30,14 +30,14 @@
       <v-card-item>
           <div class="dayName">
             <div class="text-overline mb-1 weekDay">
-              {{ day.toLocaleString('uk-UA', {weekday: 'short'}) }}
+              {{ day.date.toLocaleString('uk-UA', {weekday: 'short'}) }}
             </div>
-            <div class="text-h6 mb-1 day" :class="{ today: isToday(day) }">{{ day.getDate() }}</div>
+            <div class="text-h6 mb-1 day" :class="{ today: isToday(day) }">{{ day.date.getDate() }}</div>
           </div>
-          <WeekLesson :lessons="lessonsByDate[day.toLocaleDateString('en-CA')] || []" @update-lessons="getLessonsByDate"/>
+          <WeekLesson :lessons="lessonsByDate && lessonsByDate[typeOfWeek] ? lessonsByDate[typeOfWeek][day.weekday] || [] : []"  @update-lessons="getLessonsByDate"  :typeOfWeek="typeOfWeek"/>
           <div class="d-flex justify-center align-end mb-6" v-if="isHovering && role === 'admin'">
             <v-btn
-            @click="openModal(day)"
+            @click="openModal(day.date)"
             icon="mdi-plus"
             variant="text"
             ></v-btn>
@@ -67,6 +67,7 @@ export default {
             return {                
                 week: [],
                 month: '',
+                typeOfWeek: '',
                 current: new Date(),
                 lessonsByDate: [],
                 dialog: false,
@@ -79,33 +80,67 @@ export default {
             this.updateCalendar();
             this.getLessonsByDate();
             this.getRole();
+            this.getTypeOfWeek();
             
         },
         methods: {
             updateCalendar() {
                 this.week = this.getWeek(this.current);
                 this.month = this.getMonthName(this.current);
+                this.typeOfWeek = this.getTypeOfWeek();
+                // console.log(this.typeOfWeek);
             },
+
+            getWeekNumber(d) {
+                d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+                d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+                let yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+                let weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7)
+                return [weekNo];
+            },
+
 
             getWeek() {
                 let week = [];
                 let first = this.current.getDate() - this.current.getDay() + (this.current.getDay() === 0 ? -6 : 1);
                 for (let i = 0; i < 6; i++) {
                     let day = new Date(this.current.getFullYear(), this.current.getMonth(), first + i);
-                    week.push(day);
+                    let dayObject = {
+                        date: day,
+                        weekday: day.getDay() === 0 ? 7 : day.getDay(),
+                        weekNumber: this.getWeekNumber(day)[0]
+                    };
+                    week.push(dayObject);
+                    // console.log(dayObject.weekday);
+                    
+                    // week.push({
+                    //     date: day,
+                    //     weekday: day.getDay() === 0 ? 7 : day.getDay(),
+                    //     weekNumber: this.getWeekNumber(day)[0]
+                    // });
                 }
                 return week;
+            },
 
+            getTypeOfWeek() {
+                let typeOfWeek = this.getWeekNumber(new Date(this.getWeek()[0].date));
+                if (typeOfWeek % 2 == 0) {
+                    //знаменатель
+                    return 2;
+                } else {
+                    //числитель
+                    return 1;
+                }
             },
 
             openModal(day) {
-                this.selectedDay = day;
+                this.selectedDay = day.date;
                 this.dialog = true;
             },
 
 
             getMonthName() {
-                let date = new Date();
+                let date = new Date(this.getWeek()[0].date);
                 let month = date.toLocaleString('uk-UA', { month: 'long' });
                 return month;
             },
@@ -114,7 +149,10 @@ export default {
                 let newDate = new Date(this.current.setDate(this.current.getDate() + weeks * 7));
                 this.current = newDate;
                 this.week = this.getWeek();
+                this.typeOfWeek = this.getTypeOfWeek();
+                // console.log(this.typeOfWeek);
                 this.month = this.getMonthName();
+                
             },
             goToToday() {
                 this.current = new Date();
@@ -144,7 +182,9 @@ export default {
                 axios.get('/api/sorted-lessons')
                     .then(response => {
                         this.lessonsByDate = response.data;
-                        console.log(this.lessonsByDate);
+                        // this.lessonsByDate = Object.values(this.lessonsByDate);
+                        // console.log(this.lessonsByDate);
+                        console.log(this.lessonsByDate[this.typeOfWeek][1]);
                     })
                     .catch(error => {
                         console.error(error);
@@ -153,11 +193,11 @@ export default {
             },
 
             isToday(day) {
-        const today = new Date();
-        return day.getDate() === today.getDate() &&
-            day.getMonth() === today.getMonth() &&
-            day.getFullYear() === today.getFullYear();
-    },
+                const today = new Date();
+                return day.date.getDate() === today.getDate() &&
+                day.date.getMonth() === today.getMonth() &&
+                day.date.getFullYear() === today.getFullYear();
+            },
         }
     }
 </script>

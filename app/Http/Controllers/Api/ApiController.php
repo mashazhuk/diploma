@@ -65,7 +65,7 @@ class ApiController extends Controller
                     "status" => false,
                     "message" => "Invalid password",
                     "data" => []
-                ]);
+                ], 422);
             }
 
         } else {
@@ -73,7 +73,7 @@ class ApiController extends Controller
                 "status" => false,
                 "message" => "Please pass email and password",
                 "data" => []
-            ]);
+            ], 401);
         };
     }
 
