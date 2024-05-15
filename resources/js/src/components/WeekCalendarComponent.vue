@@ -2,7 +2,7 @@
     <Menu></Menu>
 
     <div class="calendar-header">
-        <h3>{{ month }}</h3>
+        <h3>{{ month + ', ' + year }}</h3>
         <div class="calendar-header right">
             <v-btn @click="changeWeek(-1)" density="compact" icon="mdi-chevron-left"></v-btn>
             <v-btn @click="goToToday" variant="plain" density="compact" class="pa-0">Сьогодні</v-btn>
@@ -34,7 +34,7 @@
             </div>
             <div class="text-h6 mb-1 day" :class="{ today: isToday(day) }">{{ day.date.getDate() }}</div>
           </div>
-          <WeekLesson :lessons="lessonsByDate && lessonsByDate[typeOfWeek] ? lessonsByDate[typeOfWeek][day.weekday] || [] : []"  @update-lessons="getLessonsByDate"  :typeOfWeek="typeOfWeek"/>
+          <WeekLesson :lessons="lessonsByDate ? (lessonsByDate[day.date.toLocaleDateString('en-CA')] || []).concat(lessonsByDate[typeOfWeek + '-' + day.weekday] || []) : []"  @update-lessons="getLessonsByDate"  :typeOfWeek="typeOfWeek"/>
           <div class="d-flex justify-center align-end mb-6" v-if="isHovering && role === 'admin'">
             <v-btn
             @click="openModal(day.date)"
@@ -67,6 +67,7 @@ export default {
             return {                
                 week: [],
                 month: '',
+                year: '',
                 typeOfWeek: '',
                 current: new Date(),
                 lessonsByDate: [],
@@ -87,6 +88,7 @@ export default {
             updateCalendar() {
                 this.week = this.getWeek(this.current);
                 this.month = this.getMonthName(this.current);
+                this.year = this.getYear();
                 this.typeOfWeek = this.getTypeOfWeek();
                 // console.log(this.typeOfWeek);
             },
@@ -111,13 +113,6 @@ export default {
                         weekNumber: this.getWeekNumber(day)[0]
                     };
                     week.push(dayObject);
-                    // console.log(dayObject.weekday);
-                    
-                    // week.push({
-                    //     date: day,
-                    //     weekday: day.getDay() === 0 ? 7 : day.getDay(),
-                    //     weekNumber: this.getWeekNumber(day)[0]
-                    // });
                 }
                 return week;
             },
@@ -134,7 +129,7 @@ export default {
             },
 
             openModal(day) {
-                this.selectedDay = day.date;
+                this.selectedDay = day;
                 this.dialog = true;
             },
 
@@ -145,6 +140,12 @@ export default {
                 return month;
             },
 
+            getYear() {
+                let date = new Date(this.getWeek()[0].date);
+                let year = date.getFullYear();
+                return year;
+            },
+
             changeWeek(weeks) {
                 let newDate = new Date(this.current.setDate(this.current.getDate() + weeks * 7));
                 this.current = newDate;
@@ -152,6 +153,7 @@ export default {
                 this.typeOfWeek = this.getTypeOfWeek();
                 // console.log(this.typeOfWeek);
                 this.month = this.getMonthName();
+                this.year = this.getYear();
                 
             },
             goToToday() {
@@ -170,11 +172,6 @@ export default {
                         this.role = res.data.role;
                         localStorage.setItem('role', res.data.role);
                     })
-                    // .catch(error => {
-                    //     if(error.response.status === 401) {
-                    //         this.$router.push('/login');
-                    //     }
-                    // })
             },
 
            
@@ -182,9 +179,7 @@ export default {
                 axios.get('/api/sorted-lessons')
                     .then(response => {
                         this.lessonsByDate = response.data;
-                        // this.lessonsByDate = Object.values(this.lessonsByDate);
-                        // console.log(this.lessonsByDate);
-                        console.log(this.lessonsByDate[this.typeOfWeek][1]);
+                        console.log(this.lessonsByDate);
                     })
                     .catch(error => {
                         console.error(error);

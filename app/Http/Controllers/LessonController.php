@@ -15,11 +15,22 @@ class LessonController extends Controller
 
     public function getSortedLessons() {
         $lessons = Lesson::all();
-        $lessonsByDate = $lessons->groupBy('type_of_week')->map(function ($lessonsOnSameDay) {
-            return $lessonsOnSameDay->groupBy('weekday')->map(function ($lessonsOnSameTypeOfWeek) {
-                return $lessonsOnSameTypeOfWeek->sortBy('start_time');
-            });
+        $lessonsByDate = $lessons->groupBy(function ($lesson) {
+            if ($lesson->type_of_week && $lesson->weekday) {
+                // return $lesson->type_of_week . '+' . $lesson->weekday;
+                return $lesson->type_of_week . '-' . $lesson->weekday;
+            } else {
+                // Если нет type_of_week и weekday, используйте lesson_date для группировки
+                return $lesson->lesson_date;
+            }
+        })->map(function ($lessonsOnSameDay) {
+            return $lessonsOnSameDay->sortBy('start_time')->values();
         });
+        // $lessonsByDate = $lessons->groupBy('type_of_week')->map(function ($lessonsOnSameDay) {
+        //     return $lessonsOnSameDay->groupBy('weekday')->map(function ($lessonsOnSameTypeOfWeek) {
+        //         return $lessonsOnSameTypeOfWeek->sortBy('start_time');
+        //     });
+        // });
 
         return response()->json($lessonsByDate);
     }

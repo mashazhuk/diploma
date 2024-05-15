@@ -4,7 +4,7 @@
                 <span class="lesson-name">{{ lesson.lesson_name }}</span>
                 <div class="time flex-column">
                     <span>{{ transformTime(lesson.start_time) }}</span>
-                    <span>{{ transformTime(lesson.end_time) }}</span>
+                    <span v-if="lesson.end_time">{{ transformTime(lesson.end_time) }}</span>
                 </div>
                 <v-icon v-if="role === 'admin'" class="icon" icon="mdi-pencil" end @click.stop="openEditModal(lesson)"></v-icon>
             </v-btn>
