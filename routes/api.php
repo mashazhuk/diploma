@@ -9,7 +9,6 @@ use App\Http\Controllers\UserController;
 //Open routes
 Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
-Route::get("sorted-lessons", [LessonController::class, 'getSortedLessons']);
 Route::post("update/{id}", [LessonController::class, 'update']);
 Route::post("add-lesson", [LessonController::class, 'addLesson']);
 Route::post("delete-lesson/{id}", [LessonController::class, 'deleteLesson']);
@@ -19,6 +18,7 @@ Route::post("delete-lesson/{id}", [LessonController::class, 'deleteLesson']);
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function() {
+    Route::get("sorted-lessons", [LessonController::class, 'getSortedLessons']);
     Route::post('logout', [ApiController::class, "logout"]);
     Route::get('profile', [ApiController::class, "profile"]);
     Route::post('edit-profile', [ApiController::class, 'editProfile']);

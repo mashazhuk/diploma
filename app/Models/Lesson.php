@@ -18,5 +18,9 @@ class Lesson extends Model
         'type_of_week',
         'weekday'
     ];
+
+    public function groupLesson() {
+        return $this->hasMany(GroupLesson::class, 'lesson_id');
+    }
 }
  

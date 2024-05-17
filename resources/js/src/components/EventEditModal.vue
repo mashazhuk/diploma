@@ -9,8 +9,9 @@
         rounded="lg"
         variant="flat"
         max-width="650"
-        min-height="300"
+        height="400"
         width="600"
+        style="overflow-y: auto"
       >
       <v-form
         @submit.prevent="submitForm"
@@ -51,11 +52,31 @@
               <v-btn icon="$close" size="large" variant="text" @click="$emit('close')"></v-btn>
           </v-card-title>
 
+          <v-checkbox-btn v-model="repeatMain" class="pe-2" label="Повторювати: " @click.stop></v-checkbox-btn>
+          <v-radio-group
+            v-model="repeatType"            
+            v-if="repeatMain"
+            inline
+          >
+          <v-radio value="1" label="по чисельнику" @click.stop></v-radio>
+          <v-radio value="2" label="по знаменнику" @click.stop></v-radio>
+          </v-radio-group>
+          <v-select
+            v-if="repeatMain"
+            v-model="weekDay"
+            :value="lesson.weekday ? getDayOfWeek(lesson.weekday) : 'День тижня..'"
+            :items="days"
+            item-value="value"
+            item-title="text"
+            @click.stop
+          ></v-select>
+          
           <v-text-field
+          v-if="!repeatMain"
           v-model="formattedDateForm"
           :active="menu2"
           :focus="menu2"
-          :label="new Date(lesson.lesson_date).toLocaleDateString('uk-UA')"
+          :label="lesson.lesson_date ? new Date(lesson.lesson_date).toLocaleDateString('uk-UA') : ''"
           prepend-icon="mdi-calendar"
           readonly
           @click.stop
@@ -99,6 +120,16 @@
             ></v-text-field>
 
             <label>Пароль конференції</label>
+            <v-text-field
+              v-model="lessonConfPass"
+              :label="lesson.conference_password"
+              single-line
+              variant="underlined"
+              density="compact"
+              @click.stop
+            ></v-text-field>
+
+            <label>Викладач</label>
             <v-text-field
               v-model="lessonConfPass"
               :label="lesson.conference_password"
@@ -157,8 +188,19 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
           loading: false,
           date: null,
           menu2: false,
+          repeatMain: true,
+          repeatType: null,
+          weekDay: null,
           timeRules: [
              v => !v || /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(v) || 'Некоректний час'
+          ],
+          days: [
+            { value: 1, text: "Понеділок" },
+            { value: 2, text: "Вівторок" },
+            { value: 3, text: "Середа" },
+            { value: 4, text: "Четвер" },
+            { value: 5, text: "П'ятниця" },
+            { value: 6, text: "Субота" }
           ],
         };
       },
@@ -196,10 +238,19 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
           let formData = {};
           if (this.startTime) formData.start_time = this.startTime;
           if (this.endTime) formData.end_time = this.endTime;
-          if (this.formattedDateDB) formData.lesson_date = this.formattedDateDB;
+          // if (this.formattedDateDB) formData.lesson_date = this.formattedDateDB;
           if (this.lessonName) formData.lesson_name = this.lessonName;
           if (this.lessonConfId) formData.conference_id = this.lessonConfId;
           if (this.lessonConfPass) formData.conference_password = this.lessonConfPass;
+          if (this.repeatMain) {
+              formData.lesson_date = null;
+              formData.type_of_week = this.repeatType;
+              formData.weekday = this.weekDay;
+          } else {
+              formData.type_of_week = null;
+              formData.weekday = null;
+              formData.lesson_date = this.formattedDateDB;
+          }
 
           const lessonId = this.lesson.id;
           axios.post(`/api/update/${lessonId}`, formData)
@@ -211,6 +262,8 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
               if (this.lessonName) this.lesson.lesson_name = this.lessonName;
               if (this.lessonConfId) this.lesson.conference_id = this.lessonConfId;
               if (this.lessonConfPass) this.lesson.conference_password = this.lessonConfPass;
+              if (this.repeatType) this.type_of_week = this.repeatType;
+              if (this.weekDay) this.weekday = this.weekDay;
 
               this.$emit('update-lessons');
             })
@@ -218,6 +271,14 @@ import ConfirmDeletingLesson from './ConfirmDeletingLesson.vue';
               console.error(error);
             });
 
+
+        },
+        getDayOfWeek(dayNumber) {
+          const day = this.days.find(d => d.value === dayNumber);
+          return day.text;
+        },
+
+        getRepeat() {
 
         },
 

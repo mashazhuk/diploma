@@ -1,6 +1,6 @@
 <template>
     <div v-for="(lesson, idx) in lessons" :key="idx">
-            <v-btn @click="openModal(lesson)" :class="{ 'btn-lesson': true, 'btn-lesson-hover': role === 'admin' }">
+            <v-btn @click="openModal(lesson)" :variant="lesson.lesson_date ? 'tonal' : 'elevated'" :class="{ 'btn-lesson': true, 'btn-lesson-hover': role === 'admin' }">
                 <span class="lesson-name">{{ lesson.lesson_name }}</span>
                 <div class="time flex-column">
                     <span>{{ transformTime(lesson.start_time) }}</span>

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Lesson;
 use App\Http\Resources\LessonResource;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class LessonController extends Controller
 {
@@ -14,10 +16,22 @@ class LessonController extends Controller
     }
 
     public function getSortedLessons() {
-        $lessons = Lesson::all();
+        // $lessons = Lesson::all();
+        $id = Auth::user()->id;
+        $user = User::find($id);
+
+        $lessons = Lesson::where(function ($query) use ($user) {
+            if ($user->role == 'admin') {
+                $query->where('teacher', $user->id);
+            } elseif ($user->role == 'student') {
+            $query->whereHas('groupLesson', function ($query) use ($user) {
+                $query->where('group_name', $user->group_name);
+            });
+        }
+        })->get();
+
         $lessonsByDate = $lessons->groupBy(function ($lesson) {
             if ($lesson->type_of_week && $lesson->weekday) {
-                // return $lesson->type_of_week . '+' . $lesson->weekday;
                 return $lesson->type_of_week . '-' . $lesson->weekday;
             } else {
                 // Если нет type_of_week и weekday, используйте lesson_date для группировки
@@ -26,11 +40,6 @@ class LessonController extends Controller
         })->map(function ($lessonsOnSameDay) {
             return $lessonsOnSameDay->sortBy('start_time')->values();
         });
-        // $lessonsByDate = $lessons->groupBy('type_of_week')->map(function ($lessonsOnSameDay) {
-        //     return $lessonsOnSameDay->groupBy('weekday')->map(function ($lessonsOnSameTypeOfWeek) {
-        //         return $lessonsOnSameTypeOfWeek->sortBy('start_time');
-        //     });
-        // });
 
         return response()->json($lessonsByDate);
     }

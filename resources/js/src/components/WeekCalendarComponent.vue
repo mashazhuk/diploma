@@ -3,6 +3,8 @@
 
     <div class="calendar-header">
         <h3>{{ month + ', ' + year }}</h3>
+        <h3 v-if="typeOfWeek===1">чисельник</h3>
+        <h3 v-if="typeOfWeek===2">знаменник</h3>
         <div class="calendar-header right">
             <v-btn @click="changeWeek(-1)" density="compact" icon="mdi-chevron-left"></v-btn>
             <v-btn @click="goToToday" variant="plain" density="compact" class="pa-0">Сьогодні</v-btn>
@@ -176,7 +178,12 @@ export default {
 
            
             getLessonsByDate() {
-                axios.get('/api/sorted-lessons')
+                const token = localStorage.getItem('token');
+                axios.get('/api/sorted-lessons', {
+                    headers: {
+                     'Authorization': `Bearer ${token}`
+                    }
+                })
                     .then(response => {
                         this.lessonsByDate = response.data;
                         console.log(this.lessonsByDate);

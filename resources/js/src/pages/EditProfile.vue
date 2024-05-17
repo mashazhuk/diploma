@@ -65,6 +65,33 @@
         <v-col cols="4"
         md="1"
         lg="1">
+          <v-list-subheader>Група</v-list-subheader>
+        </v-col>
+
+        <v-col 
+          cols="8"
+          sm="8"
+          md="4"
+          lg="4">
+          <v-text-field
+           :counter="30"
+           density="compact"
+           prepend-inner-icon="mdi-account"
+           
+           v-model="name"
+           :placeholder="user.group_name"
+           type="name"
+           variant="outlined"
+           
+           required
+         ></v-text-field>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="4"
+        md="1"
+        lg="1">
           <v-list-subheader>Пароль</v-list-subheader>
         </v-col>
 
@@ -136,7 +163,7 @@
       // },
 
        data: () => ({
-          name: '',
+        name: '',
          email: '',
          password: '123456',
          role: 'admin',
