@@ -10,7 +10,7 @@
             </v-btn>
     </div>
     <eventModal @close="dialog = false" :dialog="dialog" :lesson="selectedLesson"></eventModal>
-    <event-edit-modal @close="edit_dialog = false" :dialog="edit_dialog" :lesson="selectedLesson" @update-lessons="$emit('update-lessons')" />
+    <event-edit-modal v-if="edit_dialog" @close="edit_dialog = false" :dialog="edit_dialog" :lesson="selectedLesson" @update-lessons="$emit('update-lessons')" />
 
 </template>
     

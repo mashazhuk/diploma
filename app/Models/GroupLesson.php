@@ -9,6 +9,13 @@ class GroupLesson extends Model
 {
     use HasFactory;
     protected $table = 'group_lesson';
+    
+    public $timestamps = false;
+
+    protected $fillable = [
+        'lesson_id',
+        'group_name',
+    ];
 
     public function lesson() {
         return $this->belongsTo(Lesson::class, 'lesson_id');

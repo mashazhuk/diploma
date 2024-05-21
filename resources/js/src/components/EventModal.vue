@@ -2,22 +2,21 @@
   <v-dialog
       v-model="showDialog"
       width="auto"
-      @click="closeWithEvent('close', $event)"
     >
     <v-card
       class="ma-4"
       rounded="lg"
       variant="flat"
-      max-width="650"
       min-height="300"
-      width="400"
+      lg="width: 400"
+      sm="width: 320"
     >
     
-      <v-card-item>
+      <v-card-item @click.stop>
         <v-card-title class="text-body-2 d-flex align-center">
           <v-icon
             color="#949cf7"
-            icon="mdi-calendar"
+            icon="mdi-calendar" 
             start
           ></v-icon>
 
@@ -83,12 +82,7 @@ export default {
       getRole() {
             this.role = localStorage.getItem('role');
       },
-      closeWithEvent(eventValue, event) {
-      // Проверяем, был ли клик вне модального окна
-      if (!this.$el.contains(event.target)) {
-        this.$emit('close', eventValue);
-      }
-    },
+      
     // Обработчик события для закрытия модального окна при нажатии на клавишу "Escape"
     onEscKeyPressed(event) {
       if (event.key === 'Escape') {

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GroupLessonController;
+use App\Http\Controllers\GroupController;
 
 //Open routes
 Route::post("register", [ApiController::class, "register"]);
@@ -12,7 +14,10 @@ Route::post("login", [ApiController::class, "login"]);
 Route::post("update/{id}", [LessonController::class, 'update']);
 Route::post("add-lesson", [LessonController::class, 'addLesson']);
 Route::post("delete-lesson/{id}", [LessonController::class, 'deleteLesson']);
-
+Route::get("get-group-name/{id}", [GroupLessonController::class, 'getGroupName']);
+Route::get("get-groups", [GroupController::class, 'getGroups']);
+Route::post("update-groups/{id}", [GroupLessonController::class, 'updateGroups']);
+Route::get("get-teachers", [UserController::class, 'getTeachers']);
 
 //Protected routes 
 Route::group([

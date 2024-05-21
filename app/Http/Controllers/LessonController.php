@@ -44,6 +44,10 @@ class LessonController extends Controller
         return response()->json($lessonsByDate);
     }
 
+    public function getTeacherName() {
+        $teacher;
+    }
+
     public function update(Request $request, $id) {
         $lesson = Lesson::find($id);
         $lesson->update($request->all());
