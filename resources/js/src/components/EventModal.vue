@@ -4,19 +4,19 @@
       width="auto"
     >
     <v-card
-      class="ma-4"
+    class="ma-4"
       rounded="lg"
       variant="flat"
-      min-height="300"
-      lg="width: 400"
-      sm="width: 320"
+      width="450"
+      height="400"
+      style="overflow-y: auto"
     >
     
-      <v-card-item @click.stop>
+      <v-card-item>
         <v-card-title class="text-body-2 d-flex align-center">
           <v-icon
             color="#949cf7"
-            icon="mdi-calendar" 
+            icon="mdi-clock-time-four-outline" 
             start
           ></v-icon>
 
@@ -26,6 +26,9 @@
         </v-card-title>
 
         <div class="py-2">
+          <div v-if="repeatType === 1" class="text-h6"> По чисельнику </div>
+          <div v-if="repeatType === 2" class="text-h6"> По знаменнику </div>
+          <div v-else class="text-h6">22 жовтня</div>
           <div class="text-h6"> {{ lesson.lesson_name }}</div>
 
           <div class="font-weight-light text-medium-emphasis">
@@ -54,10 +57,12 @@ export default {
       return {
         showDialog: this.dialog,
         role: '',
+        repeatType: null,
       };
     },
     mounted() {
       this.getRole();
+      this.updateRepeatMain();
       document.addEventListener('keydown', this.onEscKeyPressed);
     },
 
@@ -77,6 +82,14 @@ export default {
         const [hours, minutes] = time.split(':');
         return `${hours}:${minutes}`;
         
+      },
+
+      updateRepeatMain() {
+        if (this.lesson && this.lesson.type_of_week !== null) {          
+          this.repeatType = this.lesson.type_of_week;
+        } else {
+          this.repeatType = null;
+        }
       },
 
       getRole() {

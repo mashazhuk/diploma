@@ -18,21 +18,40 @@ class UserController extends Controller
 
     public function getTeachers() {
         $teachers = User::where('role', 'admin')
-                        ->select('id', 'female', 'name', 'surname')
+                        ->select('id', 'last_name', 'name', 'surname')
                         ->get()
                         ->toArray();
         
         $teachersArray = [];
         foreach ($teachers as $teacher) {
             $id = $teacher['id'];
-            $fullName = $teacher['surname'] . ' ' . $teacher['name'] . ' ' . $teacher['female'];
+            $fullName = $teacher['surname'] . ' ' . $teacher['name'] . ' ' . $teacher['last_name'];
             $teachersArray[] = [
-                'id' => $id,
+                'id' => (int)$id,
                 'name' => $fullName
             ];
         }
     
         return response()->json($teachersArray);
+    }
+
+    public function getCurrentTeacher($id) {
+        $currentTeacher = User::select('last_name', 'name', 'surname')->find($id);
+
+        $fullName = $currentTeacher['surname'] . ' ' . $currentTeacher['name'] . ' ' . $currentTeacher['last_name'];
+        $teacher = [
+            'id' => (int)$id,
+            'name' => $fullName
+        ];
+
+        return response()->json($teacher);
+    }
+
+    public function getUserGroupName() {
+        $id = Auth::user()->id;
+        $currentuser = User::find($id);
+        $group = $currentuser->group_name;
+        return response()->json($group);
     }
     
     

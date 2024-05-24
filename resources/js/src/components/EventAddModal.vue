@@ -2,15 +2,14 @@
     <v-dialog
         v-model="showDialog"
         width="auto"
-        @click="closeWithEvent('close', $event)"
       >
       <v-card
-        class="ma-4"
-        rounded="lg"
-        variant="flat"
-        max-width="650"
-        min-height="300"
-        width="600"
+      class="ma-4"
+      rounded="lg"
+      variant="flat"
+      width="450"
+      height="400"
+      style="overflow-y: auto"
       >
       <v-form
         @submit.prevent="submitForm"
@@ -26,7 +25,6 @@
             density="compact"
             variant="underlined"
             :rules="timeRules"
-            @click.stop
 
             @input="autoInsertColonStart"
           >
@@ -41,7 +39,6 @@
           density="compact"
           :rules="timeRules"
           @input="autoInsertColonEnd"
-          @click.stop
         >
         </v-text-field>
   
@@ -49,14 +46,33 @@
               <v-btn icon="$close" size="large" variant="text" @click="$emit('close')"></v-btn>
           </v-card-title>
 
+          <v-checkbox-btn v-model="repeatMain" class="pe-2" label="Повторювати: "></v-checkbox-btn>
+          <v-radio-group
+            v-model="repeatType"
+            v-if="repeatMain"
+            inline
+          >
+            <v-radio :value="1" label="по чисельнику" ></v-radio>
+            <v-radio :value="2" label="по знаменнику" ></v-radio>
+          </v-radio-group>
+          <v-select
+            v-if="repeatMain"
+            v-model="weekDay"
+            value="День тижня.."
+            :items="days"
+            item-value="value"
+            item-title="text"
+           
+          ></v-select>
+
           <v-text-field
+          v-if="!repeatMain"
           v-model="formattedDateForm"
           :active="menu2"
           :focus="menu2"
           :label="new Date(day).toLocaleDateString('uk-UA')"
           prepend-icon="mdi-calendar"
           readonly
-          @click.stop
 
         >
         <v-menu
@@ -82,7 +98,6 @@
               single-line
               variant="underlined"
               density="compact"
-              @click.stop
             ></v-text-field>
 
             <label>ID конференції</label>
@@ -91,7 +106,6 @@
               single-line
               variant="underlined"
               density="compact"
-              @click.stop
             ></v-text-field>
 
             <label>Пароль конференції</label>
@@ -100,13 +114,32 @@
               single-line
               variant="underlined"
               density="compact"
-              @click.stop
             ></v-text-field>
+
+            <label>Викладач</label>
+            <v-select
+              v-model="teacher"
+              :items="allTeachers"
+              :value = "teacher ? teacher : 'Оберіть викладача'"
+              item-title="name"
+              item-value="id"
+              return-object
+              single-line
+            ></v-select>
+
+            <label>Група</label>
+            <v-select
+              v-model="group"
+              :items="allGroups"
+              chips
+              multiple
+              
+            ></v-select>
   
           </div>
 
           
-          <v-btn height="48" variant="plain" density="compact" 
+          <v-btn height="48" variant="plain" density="compact" @click="$emit('close')"
             >
             Скасувати
           </v-btn>
@@ -156,13 +189,30 @@
           loading: false,
           date: null,
           menu2: false,
+          repeatMain: false,
+          repeatType: 1,
+          weekDay: null,
+          teacher: {},
+          allTeachers: [],
+          group: [],
+          allGroups: [],
           timeRules: [
              v => !v || /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(v) || 'Некоректний час'
+          ],
+          days: [
+            { value: 1, text: "Понеділок" },
+            { value: 2, text: "Вівторок" },
+            { value: 3, text: "Середа" },
+            { value: 4, text: "Четвер" },
+            { value: 5, text: "П'ятниця" },
+            { value: 6, text: "Субота" }
           ],
         };
       },
       mounted() {
         document.addEventListener('keydown', this.onEscKeyPressed);
+        this.getTeachers();
+        this.getGroups();
       },
   
       beforeDestroy() {
@@ -195,19 +245,52 @@
           if (this.lessonName) formData.lesson_name = this.lessonName;
           if (this.lessonConfId) formData.conference_id = this.lessonConfId;
           if (this.lessonConfPass) formData.conference_password = this.lessonConfPass;
-          formData.type_of_week = 1;
+          if (this.teacher) formData.teacher = this.teacher.id;
+          if (this.repeatMain) {
+            formData.lesson_date = null;
+            formData.type_of_week = this.repeatType;
+            formData.weekday = this.weekDay;
+          } else {
+            formData.type_of_week = null;
+            formData.weekday = null;
+            formData.lesson_date = this.formattedDateDB;
+          }
+
+          const groupData = {
+              groups: this.group
+            };
 
           axios.post('/api/add-lesson', formData)
             .then(response => {
-              console.log(response.data);
-              this.$emit('update-lessons');
+              axios.post(`/api/update-groups/${response.data.id}`, groupData)
+              .then(resp => {
+                this.$emit('close');
+                this.$emit('update-lessons');
+              })
+              .catch(error => {
+                console.error(error);
+              });
             })
             .catch(error => {
               console.error(error);
             });
-
-
         },
+
+        getTeachers() {
+          axios.get('api/get-teachers')
+            .then(response => {
+              this.allTeachers = response.data;
+          })
+          .catch(error => {
+            console.error(error);
+          });
+       },
+      getGroups() {
+        axios.get('api/get-groups')
+          .then(response => {
+            this.allGroups = response.data;
+          })
+      },
 
         transformTime(time) {
           const [hours, minutes] = time.split(':');
@@ -224,12 +307,12 @@
           }
         },
         
-        closeWithEvent(eventValue, event) {
-        // Проверяем, был ли клик вне модального окна
-        if (!this.$el.contains(event.target)) {
-          this.$emit('close', eventValue);
-        }
-      },
+      //   closeWithEvent(eventValue, event) {
+      //   // Проверяем, был ли клик вне модального окна
+      //   if (!this.$el.contains(event.target)) {
+      //     this.$emit('close', eventValue);
+      //   }
+      // },
       // Обработчик события для закрытия модального окна при нажатии на клавишу "Escape"
       onEscKeyPressed(event) {
         if (event.key === 'Escape') {

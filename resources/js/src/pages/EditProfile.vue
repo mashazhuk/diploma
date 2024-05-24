@@ -28,8 +28,56 @@
            :placeholder="user.name"
            type="name"
            variant="outlined"
+         ></v-text-field>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="4"
+        md="1"
+        lg="1">
+          <v-list-subheader>Прізвище</v-list-subheader>
+        </v-col>
+
+        <v-col 
+          cols="8"
+          sm="8"
+          md="4"
+          lg="4">
+          <v-text-field
+           :counter="30"
+           density="compact"
+           prepend-inner-icon="mdi-account"
            
-           required
+           v-model="last_name"
+           :placeholder="user.last_name"
+           type="name"
+           variant="outlined"
+         ></v-text-field>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="4"
+        md="1"
+        lg="1">
+          <v-list-subheader>По-батькові</v-list-subheader>
+        </v-col>
+
+        <v-col 
+          cols="8"
+          sm="8"
+          md="4"
+          lg="4">
+          <v-text-field
+           :counter="30"
+           density="compact"
+           prepend-inner-icon="mdi-account"
+           
+           v-model="surname"
+           :placeholder="user.surname"
+           type="name"
+           variant="outlined"
          ></v-text-field>
         </v-col>
       </v-row>
@@ -52,16 +100,15 @@
            density="compact"
            :counter="30"
            prepend-inner-icon="mdi-email-outline"
-           
+           :rules="emailRules"
            :placeholder="user.email"
            type="email"
            variant="outlined"
-           required
          ></v-text-field>
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row v-if="role === 'student'">
         <v-col cols="4"
         md="1"
         lg="1">
@@ -73,47 +120,10 @@
           sm="8"
           md="4"
           lg="4">
-          <v-text-field
-           :counter="30"
-           density="compact"
-           prepend-inner-icon="mdi-account"
-           
-           v-model="name"
-           :placeholder="user.group_name"
-           type="name"
-           variant="outlined"
-           
-           required
-         ></v-text-field>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="4"
-        md="1"
-        lg="1">
-          <v-list-subheader>Пароль</v-list-subheader>
-        </v-col>
-
-        <v-col 
-        cols="8"
-          sm="8"
-          md="4"
-          lg="4">
-          <v-text-field
-           v-model="password"
-           density="compact"
-           :counter="50"
-           :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
-           
-           :type="visible ? 'text' : 'password'"
-           prepend-inner-icon="mdi-lock-outline"
-           variant="outlined"
-           @click:append-inner="visible = !visible"
-         
-           label="Пароль"
-           required
-         ></v-text-field>
+          <v-select
+              v-model="group"
+              :items="allGroups"              
+            ></v-select>
         </v-col>
       </v-row>
       <v-spacer></v-spacer>
@@ -131,7 +141,7 @@
            </v-btn>
             <v-btn 
              :disabled="!form"
-             :loading="loading"
+             @click="reset"
              class="me-2 text-none"
              size="large"
              >
@@ -153,35 +163,27 @@
        name: 'EditProfile',
        mounted() {
         this.fetchProfile();
-        // this.name = this.user.name;
+        this.getGroups();
+        this.getGroupName();
+        this.getRole();
         },
-      // watch: {
-      //   'user.name': function(newVal) {
-      //     this.name = newVal
-      //     console.log(this.name);
-      //   } 
-      // },
 
        data: () => ({
-        name: '',
+         name: '',
+         last_name: '',
+         surname: '',
          email: '',
-         password: '123456',
-         role: 'admin',
+         role: '',
          visible: false,
          form: false,
          loading: false,
          user: [],
- 
-      //    passwordRules: [
-      //      value => !!value || 'Заповніть поле.',
-      //      v => v.length >= 6 || 'Мінімум 6 символів',
-      //  ],
- 
-         
-      //    emailRules: [
-      //    v => !!v || 'Заповніть поле',
-      //    v => (v && v.length >= 10) || 'Мінімум 10 символів',
-      //  ],
+         group: [],
+         allGroups: [],        
+         role: '' ,
+         emailRules: [
+            v => !v || v.length >= 10 || 'Мінімум 10 символів'
+         ],
        }),
        methods: {
          async validate() {
@@ -209,9 +211,18 @@
                 });
             }, 
 
+        reset() {
+          this.name = '',
+          this.last_name = '',
+          this.surname = '',
+          this.email = ''
+        },
+
          editProfile() {
           let formData = {};
           if(this.name) formData.name = this.name;
+          if(this.last_name) formData.last_name = this.last_name;
+          if(this.surname) formData.surname = this.surname;
           if(this.email) formData.email = this.email;
           if(this.password) formData.password = this.password;
           formData.role = this.role;
@@ -226,9 +237,13 @@
              )
                .then(resp => { 
                  console.log(resp);
+                 console.log(formData.surname);
+                 console.log(this.surname);
                  if(this.name) formData.name = this.name;
-                  if(this.email) formData.email = this.email;
-                  if(this.password) formData.password = this.password;
+                 if(this.last_name) formData.last_name = this.last_name;
+                 if (this.surname) formData.surname = this.surname;
+                 if(this.email) formData.email = this.email;
+                 if(this.password) formData.password = this.password;
                  this.loading = false;
                }) 
                .catch(error => { 
@@ -236,6 +251,29 @@
                 this.loading = false;
               });
          },
+
+         getGroupName() {
+          const token = localStorage.getItem('token');
+            axios.get('api/get-user-group-name', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
+              .then(response => {
+                this.group = response.data;
+              });
+          },
+
+          getGroups() {
+            axios.get('api/get-groups')
+              .then(response => {
+                this.allGroups = response.data;
+              })
+          },
+
+          getRole() {
+            this.role = localStorage.getItem('role');
+          },
        }
      }
    </script>

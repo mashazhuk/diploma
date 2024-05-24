@@ -16,7 +16,8 @@ class Lesson extends Model
         'conference_id',
         'conference_password',
         'type_of_week',
-        'weekday'
+        'weekday',
+        'teacher'
     ];
 
     public function groupLesson() {

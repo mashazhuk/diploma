@@ -88,14 +88,6 @@ class ApiController extends Controller
     }
 
     public function editProfile(Request $request) {
-        // $user = auth()->user();
-        // $user->update($request->all());
-    
-        // return response()->json([
-        //     "status" => true,
-        //     "message" => "Інформація про профіль",
-        //     "data" => $user 
-        // ]);
         $user = auth()->user();
         $user->update($request->all());
 
@@ -105,6 +97,13 @@ class ApiController extends Controller
             "data" => $user
         ]);
     }
+
+    // public function getUserGroupName($id) {
+    //     $user = auth()->user();
+    //     $currentuser = User::find($id);
+    //     $group = $currentuser->group_name;
+    //     return response()->json($group);
+    // }
 
     public function logout() {
         $userData = auth()->user();

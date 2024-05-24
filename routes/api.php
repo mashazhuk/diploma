@@ -18,6 +18,8 @@ Route::get("get-group-name/{id}", [GroupLessonController::class, 'getGroupName']
 Route::get("get-groups", [GroupController::class, 'getGroups']);
 Route::post("update-groups/{id}", [GroupLessonController::class, 'updateGroups']);
 Route::get("get-teachers", [UserController::class, 'getTeachers']);
+Route::get('get-current-teacher/{id}', [UserController::class, 'getCurrentTeacher']);
+Route::post('add-groups', [GroupLessonController::class, 'addGroups']);
 
 //Protected routes 
 Route::group([
@@ -28,6 +30,7 @@ Route::group([
     Route::get('profile', [ApiController::class, "profile"]);
     Route::post('edit-profile', [ApiController::class, 'editProfile']);
     Route::get("get-role", [UserController::class, 'getRole']);
+    Route::get('get-user-group-name', [UserController::class, 'getUserGroupName']);
     
     
 });

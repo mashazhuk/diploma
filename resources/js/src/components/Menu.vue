@@ -1,5 +1,39 @@
 <template>
-    <v-navigation-drawer
+    <v-menu
+      v-model="menu"
+
+      :close-on-content-click="false"
+    >
+      <template v-slot:activator="{ props }">
+        <v-avatar v-bind="props" :image = "url" class="cursor-pointer mt-7"></v-avatar>
+      </template>
+
+      <v-card min-width="300">
+        <v-list>
+          <v-list-item
+          :subtitle="user.email"
+          :title="user.name"
+          ></v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list>
+          <router-link class="nav-link" to="/week-sch-student"><v-list-item prepend-icon="mdi-calendar-blank-outline" title="Розклад" value="shared"></v-list-item></router-link>
+          <router-link class="nav-link" to="/edit-profile"><v-list-item prepend-icon="mdi-account-cog-outline" title="Редагувати профіль" value="edit"></v-list-item></router-link>
+          <!-- <v-list-item prepend-icon="mdi-logout"><v-btn @click.prevent="logout" >Logout</v-btn></v-list-item> -->
+
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn prepend-icon="mdi-logout" color="error" @click.prevent="logout" >Logout</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
+</template>
+    <!-- <v-navigation-drawer
         permanent
         app
         expand-on-hover
@@ -8,7 +42,7 @@
         <v-list>
           <router-link class="nav-link" to="/edit-profile">
             <v-list-item
-              prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+              :prepend-avatar="url"
               :subtitle="user.email"
               :title="user.name"
             ></v-list-item>
@@ -19,8 +53,7 @@
 
         <v-list density="compact" nav>
         
-        <!-- <router-link class="nav-link" to="/"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link> -->
-          <router-link class="nav-link" to="/week-sch-student"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
+         <router-link class="nav-link" to="/week-sch-student"><v-list-item prepend-icon="mdi-account-multiple" title="Розклад на тиждень" value="shared"></v-list-item></router-link>
           <router-link class="nav-link" to="/login"><v-list-item prepend-icon="mdi-account-multiple" title="Login" value="login"></v-list-item></router-link>
           <router-link class="nav-link" to="/register"><v-list-item prepend-icon="mdi-account-multiple" title="Register" value="register"></v-list-item></router-link>
           <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
@@ -32,8 +65,8 @@
                 </v-list>
           </div>
         </template>
-      </v-navigation-drawer>
-</template>
+      </v-navigation-drawer> -->
+<!-- </template> -->
 
 <script>
 export default {
@@ -42,11 +75,16 @@ export default {
     data() {
         return {  
             user: [],
+            url: '',
+            menu: false,
+            message: false,
+      hints: false
         }
     }, 
 
     mounted() {
         this.fetchProfile();
+        this.randomPhoto();
     },
 
     methods: {       
@@ -55,6 +93,12 @@ export default {
           localStorage.removeItem('x_xsrf_token'),
                 localStorage.removeItem('token'),
                 this.$router.push('/login')
+        },
+
+        randomPhoto() {
+          let url = "https://randomuser.me/api/portraits/lego/" + Math.floor(Math.random() * (8 - 0 + 1) + 0) + ".jpg";
+          this.url = url;
+          return url;
         },
 
         fetchProfile() {

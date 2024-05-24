@@ -23,5 +23,16 @@ class GroupLessonController extends Controller
         }
         return response()->json(['status' => 'success']);
     }
+
+    public function addGroups(Request $request) {
+        $newGroups = $request->get('groups');
+        foreach ($newGroups as $groupName) {
+            GroupLesson::create([
+                'lesson_id' => $id,
+                'group_name' => $groupName,
+            ]);
+        }
+        return response()->json(['status' => 'success']);
+    }
 }
 

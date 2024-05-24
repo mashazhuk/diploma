@@ -44,10 +44,6 @@ class LessonController extends Controller
         return response()->json($lessonsByDate);
     }
 
-    public function getTeacherName() {
-        $teacher;
-    }
-
     public function update(Request $request, $id) {
         $lesson = Lesson::find($id);
         $lesson->update($request->all());
@@ -55,18 +51,8 @@ class LessonController extends Controller
     }
 
     public function addLesson(Request $request) {
-        Lesson::create($request->all());
-        // Lesson::create([
-        //     "lesson_name" => $request->lesson_name,
-        //     "lesson_date" => $request->lesson_date,
-        //     "start_time" => $request->start_time,
-        //     "end_time" => $request->end_time,
-        //     "conference_id" => $request->conference_id,
-        //     "conference_password" => $request->conference_password,
-        //     "type_of_week" => $request->type_of_week
-        // ]);
-
-        return response()->json('Урок успішно додано!');
+        $lesson = Lesson::create($request->all());
+        return response()->json($lesson, 200);
     }
 
     public function deleteLesson(Request $request, $id) {

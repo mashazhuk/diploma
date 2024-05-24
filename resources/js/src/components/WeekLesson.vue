@@ -9,7 +9,7 @@
                 <v-icon v-if="role === 'admin'" class="icon" icon="mdi-pencil" end @click.stop="openEditModal(lesson)"></v-icon>
             </v-btn>
     </div>
-    <eventModal @close="dialog = false" :dialog="dialog" :lesson="selectedLesson"></eventModal>
+    <eventModal v-if="dialog" @close="dialog = false" :dialog="dialog" :lesson="selectedLesson"></eventModal>
     <event-edit-modal v-if="edit_dialog" @close="edit_dialog = false" :dialog="edit_dialog" :lesson="selectedLesson" @update-lessons="$emit('update-lessons')" />
 
 </template>
@@ -72,6 +72,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: #272727;
 }
 
 .btn-lesson-hover {

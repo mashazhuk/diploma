@@ -54,13 +54,13 @@
             v-if="repeatMain"
             inline
           >
-            <v-radio value="1" label="по чисельнику" ></v-radio>
-            <v-radio value="2" label="по знаменнику" ></v-radio>
+            <v-radio :value="1" label="по чисельнику" ></v-radio>
+            <v-radio :value="2" label="по знаменнику" ></v-radio>
           </v-radio-group>
           <v-select
             v-if="repeatMain"
             v-model="weekDay"
-            :value="lesson.weekday ? getDayOfWeek(lesson.weekday) : 'День тижня..'"
+            :value="weekDay"
             :items="days"
             item-value="value"
             item-title="text"
@@ -212,6 +212,9 @@ export default {
     this.getGroups();
     this.getGroupName();
     this.getTeachers();
+    this.getCurrentTeacher();
+    this.updateRepeatMain();
+    this.getDayOfWeek();
   },
 
   beforeDestroy() {
@@ -239,6 +242,22 @@ export default {
       this.confirm_dialog = true;
     },
 
+    updateRepeatMain() {
+      if (this.lesson && this.lesson.type_of_week !== null) {
+        this.repeatMain = true;
+        this.repeatType = this.lesson.type_of_week;
+      } else {
+        this.repeatMain = false;
+        this.repeatType = null;
+      }
+    },
+
+    getDayOfWeek() {
+      let dayNumber = this.lesson.weekday;
+      this.weekDay = this.days.find(d => d.value === dayNumber);
+      
+    },
+
     submitForm() {
       let formData = {};
       if (this.startTime) formData.start_time = this.startTime;
@@ -246,6 +265,7 @@ export default {
       if (this.lessonName) formData.lesson_name = this.lessonName;
       if (this.lessonConfId) formData.conference_id = this.lessonConfId;
       if (this.lessonConfPass) formData.conference_password = this.lessonConfPass;
+      formData.teacher= this.teacher.id;
       if (this.repeatMain) {
         formData.lesson_date = null;
         formData.type_of_week = this.repeatType;
@@ -314,11 +334,14 @@ export default {
         console.error(error);
      });
       },
-
-    getDayOfWeek(dayNumber) {
-      const day = this.days.find(d => d.value === dayNumber);
-      return day.text;
-    },
+      
+      getCurrentTeacher() {
+        const teacherId = this.lesson.teacher;
+        axios.get(`api/get-current-teacher/${teacherId}`)
+          .then(response => {
+            this.teacher = response.data;
+          });
+      },
 
     transformTime(time) {
       const [hours, minutes] = time.split(':');

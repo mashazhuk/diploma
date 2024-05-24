@@ -25,16 +25,16 @@
       <v-hover v-slot="{ isHovering, props }">
       <v-card
       class="day-of-week"
-        color="indigo-accent-2"
+        color="#aac9f2"
         variant="outlined"
         v-bind="props"
       >
       <v-card-item>
           <div class="dayName">
-            <div class="text-overline mb-1 weekDay">
-              {{ day.date.toLocaleString('uk-UA', {weekday: 'short'}) }}
+            <div class="mb-1 weekday">
+              {{ day.date.toLocaleString('uk-UA', {weekday: 'long'}) }}
             </div>
-            <div class="text-h6 mb-1 day" :class="{ today: isToday(day) }">{{ day.date.getDate() }}</div>
+            <div class="text-h4 mb-1 day" :class="{ today: isToday(day) }">{{ day.date.getDate() }}</div>
           </div>
           <WeekLesson :lessons="lessonsByDate ? (lessonsByDate[day.date.toLocaleDateString('en-CA')] || []).concat(lessonsByDate[typeOfWeek + '-' + day.weekday] || []) : []"  @update-lessons="getLessonsByDate"  :typeOfWeek="typeOfWeek"/>
           <div class="d-flex justify-center align-end mb-6" v-if="isHovering && role === 'admin'">
@@ -209,7 +209,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100px;
+    height: 50px;
 
     h3 {
         text-transform: capitalize;        
@@ -221,6 +221,7 @@ export default {
 
 
 }
+
 .sch-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -246,7 +247,7 @@ export default {
 }
 
 .today {
-    color: #29B6F6;
+    color: #4292fc;
 }
 
 .weekday {
@@ -255,6 +256,13 @@ export default {
 
 .dayName {
     border-bottom: 1px solid grey;
+    display: flex;
+    line-height: 2.5rem;
+}
+
+.day {
+    position: absolute;
+    right: 20px;
 }
 
 p {
