@@ -66,21 +66,21 @@
           ></v-select>
 
           <v-text-field
-          v-if="!repeatMain"
-          v-model="formattedDateForm"
-          :active="menu2"
-          :focus="menu2"
-          :label="new Date(day).toLocaleDateString('uk-UA')"
-          prepend-icon="mdi-calendar"
-          readonly
+            v-if="!repeatMain"
+            v-model="formattedDateForm"
+            :active="menu2"
+            :focus="menu2"
+            :label="new Date(day).toLocaleDateString('uk-UA')"
+            prepend-icon="mdi-calendar"
+            readonly
 
-        >
-        <v-menu
-            v-model="menu2"
-            :close-on-content-click="false"
-            activator="parent"
-            transition="scale-transition"
           >
+          <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              activator="parent"
+              transition="scale-transition"
+            >
           <v-date-picker
               elevation="24"
               v-if="menu2"
@@ -120,7 +120,6 @@
             <v-select
               v-model="teacher"
               :items="allTeachers"
-              :value = "teacher ? teacher : 'Оберіть викладача'"
               item-title="name"
               item-value="id"
               return-object

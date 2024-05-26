@@ -11,6 +11,7 @@ import * as directives from 'vuetify/directives'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
 import axios from 'axios';
 import { createI18n } from 'vue-i18n'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 
 // Добавьте перехватчик ответов
 axios.interceptors.response.use(
@@ -36,6 +37,7 @@ const vuetify = createVuetify({
   },
     components: {
         VTimePicker,
+        VDateInput,
         ...components
       },
   directives,

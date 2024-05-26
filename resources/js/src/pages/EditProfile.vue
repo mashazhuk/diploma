@@ -6,44 +6,11 @@
          @submit.prevent="editProfile"
          style="width: 90%; margin-top: 20px;"
     >
-    
-      <v-row>
-        <v-col cols="4"
-        md="1"
-        lg="1">
-          <v-list-subheader>Ім'я</v-list-subheader>
-        </v-col>
 
-        <v-col 
-          cols="8"
-          sm="8"
-          md="4"
-          lg="4">
-          <v-text-field
-           :counter="30"
-           density="compact"
-           prepend-inner-icon="mdi-account"
-           
-           v-model="name"
-           :placeholder="user.name"
-           type="name"
-           variant="outlined"
-         ></v-text-field>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="4"
-        md="1"
-        lg="1">
-          <v-list-subheader>Прізвище</v-list-subheader>
-        </v-col>
-
-        <v-col 
-          cols="8"
-          sm="8"
-          md="4"
-          lg="4">
+      <label><v-list-subheader>Прізвище</v-list-subheader></label>
+        <v-responsive
+          max-width="344"
+        >
           <v-text-field
            :counter="30"
            density="compact"
@@ -54,21 +21,29 @@
            type="name"
            variant="outlined"
          ></v-text-field>
-        </v-col>
-      </v-row>
+         </v-responsive>
 
-      <v-row>
-        <v-col cols="4"
-        md="1"
-        lg="1">
-          <v-list-subheader>По-батькові</v-list-subheader>
-        </v-col>
+        <label><v-list-subheader>Ім'я</v-list-subheader></label>
+        <v-responsive
+          max-width="344"
+        >
+          <v-text-field
+           :counter="30"
+           density="compact"
+           prepend-inner-icon="mdi-account"
+           
+           v-model="name"
+           :placeholder="user.name"
+           type="name"
+           variant="outlined"
+         ></v-text-field>
+        </v-responsive>
 
-        <v-col 
-          cols="8"
-          sm="8"
-          md="4"
-          lg="4">
+
+         <label><v-list-subheader>По-батькові</v-list-subheader></label>
+        <v-responsive
+          max-width="344"
+        >
           <v-text-field
            :counter="30"
            density="compact"
@@ -79,21 +54,11 @@
            type="name"
            variant="outlined"
          ></v-text-field>
-        </v-col>
-      </v-row>
+       </v-responsive>
 
-      <v-row>
-        <v-col cols="4"
-        md="1"
-        lg="1">
-          <v-list-subheader>Email</v-list-subheader>
-        </v-col>
-
-        <v-col 
-        cols="8"
-          sm="8"
-          md="4"
-          lg="4"
+       <label><v-list-subheader>Email</v-list-subheader></label>
+        <v-responsive
+          max-width="344"
         >
           <v-text-field
            v-model="email"
@@ -105,27 +70,19 @@
            type="email"
            variant="outlined"
          ></v-text-field>
-        </v-col>
-      </v-row>
+        </v-responsive>
 
-      <v-row v-if="role === 'student'">
-        <v-col cols="4"
-        md="1"
-        lg="1">
-          <v-list-subheader>Група</v-list-subheader>
-        </v-col>
 
-        <v-col 
-          cols="8"
-          sm="8"
-          md="4"
-          lg="4">
+        <label v-if="role === 'student'"><v-list-subheader>Група</v-list-subheader></label>
+        <v-responsive
+          max-width="344"
+          v-if="role === 'student'"
+        >
           <v-select
               v-model="group"
               :items="allGroups"              
             ></v-select>
-        </v-col>
-      </v-row>
+        </v-responsive>
       <v-spacer></v-spacer>
       <div class="d-flex">      
           <v-btn 

@@ -9,15 +9,54 @@
         v-model="form"
         @submit.prevent="register"
         > 
+
+        <v-text-field
+          v-model="last_name"
+          :counter="30"
+          :rules = "nameRules"
+          prepend-inner-icon="mdi-account"
+          label="Прізвище"
+          variant="outlined"
+          required
+        ></v-text-field>
+
         <v-text-field
           v-model="name"
           :counter="30"
+          :rules = "nameRules"
           prepend-inner-icon="mdi-account"
           label="Ім'я"
           variant="outlined"
           required
         ></v-text-field>
-    <v-text-field
+
+        <v-text-field
+          v-model="surname"
+          :counter="30"
+          prepend-inner-icon="mdi-account"
+          label="По-батькові"
+          variant="outlined"
+        ></v-text-field>
+
+        <v-select
+          label="Оберіть роль"
+          v-model="role"
+          :items="roles"
+          :rules="[v => !!v || 'Заповніть поле']"
+          item-title="name"
+          item-value="dbname"  
+          required        
+        ></v-select>
+
+        <v-select v-if="role == 'student'"
+          v-model="group"
+          label="Оберіть групу"
+          :rules="[v => !!v || 'Заповніть поле']"
+          :items="allGroups"  
+          required            
+        ></v-select>
+
+        <v-text-field
           v-model="email"
           :counter="30"
           prepend-inner-icon="mdi-email-outline"
@@ -83,6 +122,8 @@ import axios from 'axios';
       name: 'Register',
       data: () => ({
         name: '',
+        last_name: '',
+        surname: null,
         email: '',
         password: '',
         password_confirmation: '',
@@ -100,17 +141,45 @@ import axios from 'axios';
           v => !!v || 'Заповніть поле',
           v => (v && v.length >= 10) || 'Мінімум 10 символів',
         ],
+        nameRules: [
+          v => !!v || "Заповніть поле",
+          v => (v && v.length <= 30) || "Максимум 30 символів ",
+        ],
+        role: null,
+        roles: [
+          { name: 'Студент', dbname: 'student' },
+          { name: 'Викладач', dbname: 'admin' }
+        ],
+        group: null,
+        allGroups: [],
       }),
+
+      mounted() {
+        this.getGroups();
+      },
+
       methods: {
         async validate() {
             const { valid } = await this.$refs.form.validate()
         },
+
+        getGroups() {
+          axios.get('api/get-groups')
+            .then(response => {
+              this.allGroups = response.data;
+            })
+        },
+
         register() {
         this.loading = true;
           axios.get('/sanctum/csrf-cookie') .then(response => { 
             axios.post('/api/register', { 
                 name: this.name,
+                last_name: this.last_name,
+                surname: this.surname,
                 email: this.email, 
+                role: this.role,
+                group_name: this.group,
                 password: this.password,
                 password_confirmation: this.password_confirmation
             }) 
@@ -129,9 +198,11 @@ import axios from 'axios';
   </script>
 
 <style scoped>
-.wrapper {
-  top: 50%;
-  transform: translateY(-50%);
+@media only screen and (max-width: 1024px) {
+  .wrapper {
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 </style>
   

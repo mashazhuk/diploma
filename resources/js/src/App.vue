@@ -19,7 +19,7 @@
   height: 100vh;
   scrollbar-width: thin;
   scrollbar-color: rgb(77, 77, 77) transparent;
-}
+} 
 
 
 /* Работает в Chrome, Edge и Safari */

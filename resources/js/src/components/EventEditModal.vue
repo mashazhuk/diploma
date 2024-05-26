@@ -63,8 +63,7 @@
             :value="weekDay"
             :items="days"
             item-value="value"
-            item-title="text"
-           
+            item-title="text"           
           ></v-select>
 
           <v-text-field
@@ -74,23 +73,24 @@
             :focus="menu2"
             :label="lesson.lesson_date ? new Date(lesson.lesson_date).toLocaleDateString('uk-UA') : ''"
             prepend-icon="mdi-calendar"
-            readonly
-           
-          >
-          </v-text-field>
+            readonly           
+          >          
           <v-menu
-            v-if="menu2"
+            v-model="menu2"
             :close-on-content-click="false"
+            activator="parent"
             transition="scale-transition"
           >
             <v-date-picker
               elevation="24"
-              v-if="menu2"
+              v-if="menu2"  
               v-model="date"
               full-width
               lang="ru"
             ></v-date-picker>
+            
           </v-menu>
+        </v-text-field>
 
           <div class="py-2">
             <label>Назва уроку</label>
@@ -112,7 +112,6 @@
               density="compact"
               
             ></v-text-field>
-
             <label>Пароль конференції</label>
             <v-text-field
               v-model="lessonConfPass"
@@ -215,6 +214,7 @@ export default {
     this.getCurrentTeacher();
     this.updateRepeatMain();
     this.getDayOfWeek();
+    // this.changeDate();
   },
 
   beforeDestroy() {
@@ -222,8 +222,9 @@ export default {
   },
 
   computed: {
+    
     formattedDateForm() {
-      return this.date ? new Date(this.date).toLocaleDateString('uk-UA') : null;
+       return this.date ? new Date(this.date).toLocaleDateString('uk-UA') : null;
     },
 
     formattedDateDB() {
@@ -238,6 +239,12 @@ export default {
   },
 
   methods: {
+
+    // changeDate() {
+    //   this.date = this.lesson.date;
+    //   this.date = this.date.toLocaleDateString('uk-UA');
+    // },
+
     openConfirmModal() {
       this.confirm_dialog = true;
     },
@@ -269,13 +276,12 @@ export default {
       if (this.repeatMain) {
         formData.lesson_date = null;
         formData.type_of_week = this.repeatType;
-        formData.weekday = this.weekDay;
+        formData.weekday = this.weekDay.value;
       } else {
         formData.type_of_week = null;
         formData.weekday = null;
         formData.lesson_date = this.formattedDateDB;
       }
-
       const lessonId = this.lesson.id;
       axios.post(`/api/update/${lessonId}`, formData)
         .then(response => {
@@ -290,6 +296,7 @@ export default {
           if (this.weekDay) this.weekday = this.weekDay;
         })
         .catch(error => {
+          console.log('Form data', formData);
           console.error(error);
         });
 
@@ -299,7 +306,6 @@ export default {
 
       axios.post(`/api/update-groups/${lessonId}`, groupData)
         .then(response => {
-          console.log(response.data);
           this.$emit('close');
           this.$emit('update-lessons');
         })

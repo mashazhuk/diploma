@@ -2,7 +2,49 @@
     <Menu></Menu>
 
     <div class="calendar-header">
-        <h3>{{ month + ', ' + year }}</h3>
+        <v-menu location="bottom">
+  <template v-slot:activator="{ props }">
+    <v-btn v-bind="props" variant="plain" density="compact" class="pa-0"> {{ month + ', ' + year }} </v-btn>
+  </template>
+  <v-list>
+    <v-row no-gutters>
+      <v-col cols="4" class="text-center">
+        <v-btn icon @click="changeYear(-1)" @click.stop density="compact">
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="4" class="text-center">
+        {{ year }}
+      </v-col>
+      <v-col cols="4" class="text-center">
+        <v-btn icon @click="changeYear(1)" @click.stop density="compact">
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row no-gutters>
+      <v-col cols="6">
+        <v-list-item
+          v-for="(months, i) in months.slice(0, months.length / 2)"
+          :key="i" :value="i"
+          @click="changeMonth(i+1)"
+        >
+          <v-list-item-title>{{ months.name}}</v-list-item-title>
+        </v-list-item>
+      </v-col>
+      <v-col cols="6">
+        <v-list-item
+          v-for="(months, i) in months.slice(months.length / 2)"
+          :key="i" :value="i"
+          @click="changeMonth(i+7)"
+        >
+          <v-list-item-title>{{ months.name }}</v-list-item-title>
+        </v-list-item>
+      </v-col>
+    </v-row>
+  </v-list>
+</v-menu>
+
         <h3 v-if="typeOfWeek===1">чисельник</h3>
         <h3 v-if="typeOfWeek===2">знаменник</h3>
         <div class="calendar-header right">
@@ -75,7 +117,21 @@ export default {
                 lessonsByDate: [],
                 dialog: false,
                 selectedDay: {},
-                role: ''
+                role: '',
+                months: [
+                    { name: "Січень"},
+                    { name: "Лютий"},
+                    { name: "Березень"},
+                    { name: "Квітень"},
+                    { name: "Травень"},
+                    { name: "Червень"},
+                    { name: "Липень"},
+                    { name: "Серпень"},
+                    { name: "Вересень"},
+                    { name: "Жовтень"},
+                    { name: "Листопад"},
+                    { name: "Грудень"},
+                ]
             }
         },
 
@@ -103,6 +159,10 @@ export default {
                 return [weekNo];
             },
 
+            changeYear(years) {
+                this.current.setFullYear(this.current.getFullYear() + years);
+                this.updateCalendar();
+            },
 
             getWeek() {
                 let week = [];
@@ -133,6 +193,14 @@ export default {
             openModal(day) {
                 this.selectedDay = day;
                 this.dialog = true;
+            },
+
+            changeMonth(monthIndex) {
+                this.current = new Date(this.current.getFullYear(), monthIndex, 1);
+                if (this.current.getDay() === 0 || this.current.getDay() === 6) {
+                    this.current.setDate(this.current.getDate() + 7);
+                }
+                this.updateCalendar();
             },
 
 
@@ -205,6 +273,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+-webkit-scrollbar {
+  width: 4px;
+}
+
+-webkit-scrollbar-track {
+  background: transparent;
+}
+
+-webkit-scrollbar-thumb {
+  background-color: rgb(77, 77, 77);
+  border-radius: 20px;
+  width: 4px;
+  border: 3px transparent;
+}
+
 .calendar-header {
     display: flex;
     justify-content: space-between;

@@ -13,31 +13,70 @@
     >
     
       <v-card-item>
-        <v-card-title class="text-body-2 d-flex align-center">
-          <v-icon
-            color="#949cf7"
-            icon="mdi-clock-time-four-outline" 
-            start
-          ></v-icon>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div class="d-flex flex-column">
+              <v-layout row align-center>
+                <v-icon
+                  color="#949cf7"
+                  icon="mdi-clock-time-four-outline" 
+                  start
+                ></v-icon>
 
-          <span class="text-medium-emphasis font-weight-bold">{{ transformTime(lesson.start_time) }} - {{ transformTime(lesson.end_time) }}</span>
+                <div class="text-h6 text-medium-emphasis font-weight-bold">{{ transformTime(lesson.start_time) }} - {{ transformTime(lesson.end_time) }}</div>
+              </v-layout>
+
+
+          <v-layout row align-center class="mt-2 mb-2">
+            <v-icon
+              color="#949cf7"
+              icon="mdi-calendar-multiselect-outline" 
+              start
+            ></v-icon>
+              <span class="text-h6 text-medium-emphasis font-weight-bold" v-if="repeatType === 1"> По чисельнику </span>
+              <span class="text-h6 text-medium-emphasis font-weight-bold" v-else-if="repeatType === 2"> По знаменнику </span>
+
+            <div class="text-medium-emphasis font-weight-bold" v-else>{{ new Date(lesson.lesson_date).toLocaleDateString('uk-UA') }}</div>
+          </v-layout>
+          </div>
           <v-spacer></v-spacer>
-            <v-btn icon="$close" size="large" variant="text" @click="$emit('close')"></v-btn>
+            <v-btn icon="$close" size="large" variant="text" @click="$emit('close')"></v-btn>          
         </v-card-title>
+        <v-divider></v-divider>
 
         <div class="py-2">
-          <div v-if="repeatType === 1" class="text-h6"> По чисельнику </div>
-          <div v-if="repeatType === 2" class="text-h6"> По знаменнику </div>
-          <div v-else class="text-h6">22 жовтня</div>
-          <div class="text-h6"> {{ lesson.lesson_name }}</div>
+         
+          <div class="text-h3 mt-3"> {{ lesson.lesson_name }}</div>
 
-          <div class="font-weight-light text-medium-emphasis">
-            {{ lesson.conference_id }}
-          </div>
+          <v-layout row align-center class="mt-2">
+                <v-icon
+                  color="#949cf7"
+                  icon="mdi-identifier" 
+                  start
+                ></v-icon>
 
-          <div class="font-weight-light text-medium-emphasis">
-            {{ lesson.conference_password }}
-          </div>
+                <div class="font-weight-light text-medium-emphasis">{{ lesson.conference_id }}</div>
+          </v-layout>
+          
+          <v-layout row align-center class="mt-2">
+                <v-icon
+                  color="#949cf7"
+                  icon="mdi-lock-outline" 
+                  start
+                ></v-icon>
+
+                <div class="font-weight-light text-medium-emphasis">{{ lesson.conference_password }}</div>
+          </v-layout>
+
+          <v-layout row align-center class="mt-2">
+                <v-icon
+                  color="#949cf7"
+                  icon="mdi-human-male-board" 
+                  start
+                ></v-icon>
+
+                <div class="font-weight-light text-medium-emphasis">{{ teacher.name }}</div>
+          </v-layout>
+          
 
         </div>
       </v-card-item>
@@ -58,11 +97,13 @@ export default {
         showDialog: this.dialog,
         role: '',
         repeatType: null,
+        teacher: {}
       };
     },
     mounted() {
       this.getRole();
       this.updateRepeatMain();
+      this.getCurrentTeacher();
       document.addEventListener('keydown', this.onEscKeyPressed);
     },
 
@@ -94,6 +135,14 @@ export default {
 
       getRole() {
             this.role = localStorage.getItem('role');
+      },
+
+      getCurrentTeacher() {
+        const teacherId = this.lesson.teacher;
+        axios.get(`api/get-current-teacher/${teacherId}`)
+          .then(response => {
+            this.teacher = response.data;
+          });
       },
       
     // Обработчик события для закрытия модального окна при нажатии на клавишу "Escape"
