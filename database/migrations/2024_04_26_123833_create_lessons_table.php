@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->string('lesson_name');
-            $table->date('lesson_date');
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->date('lesson_date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->string('conference_id')->nullable();
             $table->string('conference_password')->nullable();
-            $table->integer('type_of_week');
+            $table->integer('type_of_week')->nullable();
+            $table->integer('weekday')->nullable();
+            $table->unsignedBigInteger('teacher')->nullable();
+            $table->foreign('teacher')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }

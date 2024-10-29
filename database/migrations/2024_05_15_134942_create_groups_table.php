@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->float('group_number');
+            $table->float('group_number')->unique();
+            $table->string('group_name')->unique();
             $table->timestamps();
         });
     }
